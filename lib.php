@@ -70,7 +70,6 @@ function gmeet_add_instance($moduleinstance, $mform = null) {
  */
 function gmeet_update_instance($moduleinstance, $mform = null) {
     global $DB;
-
     $moduleinstance->timemodified = time();
     $moduleinstance->id = $moduleinstance->instance;
 
@@ -95,3 +94,4 @@ function gmeet_delete_instance($id) {
 
     return true;
 }
+

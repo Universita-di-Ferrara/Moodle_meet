@@ -22,7 +22,18 @@ use moodle_url;
 use dml_missing_record_exception;
 use moodle_exception;
 use stdClass;
-
+use Google\Auth\OAuth2;
+use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
+use Google\Apps\Meet\V2beta\Client\ConferenceRecordsServiceClient;
+use Google\Apps\Meet\V2beta\GetSpaceRequest;
+use Google\Apps\Meet\V2beta\CreateSpaceRequest;
+use Google\Apps\Meet\V2beta\ListConferenceRecordsRequest;
+use Google\Apps\Meet\V2beta\ListRecordingsRequest;
+use Google\Auth\Credentials\UserRefreshCredentials;
+use Google\Service\Drive;
+use Google\Client;
+use Google_Service_Drive_Permission;
+use Google\Protobuf\Timestamp;
 /**
  * Class GHandler
  *
@@ -33,160 +44,97 @@ use stdClass;
 class GHandler
 {
 
-    private $client = null;
-    public $enabled = null;
-
-    private $issuer = null;
-
-    // potrebbe essere inserito nelle impostazioni ?? dovrebbero essere esclusivamente queste
-    const SCOPES = 'https://www.googleapis.com/auth/meetings.space.created';
 
     public function __construct()
     {
-        try {
-            $this->issuer = \core\oauth2\api::get_issuer(get_config('googlemeet', 'issuerid'));
-        } catch (dml_missing_record_exception $e) {
-            $this->enabled = false;
-        }
+    }
 
-        if ($this->issuer && (!$this->issuer->get('enabled') || $this->issuer->get('id') == 0)) {
-            $this->enabled = false;
-        }
 
-        $client = $this->get_user_oauth_client();
-        if ($this->enabled && $client->get_login_url()->get_host() !== 'accounts.google.com') {
-            throw new moodle_exception('invalidissuerid', 'googlemeet');
+
+    public function createSpace($credentials)
+    {
+        $spacesServiceClient = new SpacesServiceClient(['credentials' => $credentials]);
+
+        // Prepare the request message.
+        $request = new CreateSpaceRequest();
+
+        // Call the API and handle any network failures.
+        // TO DO: limit access only to domain users
+        /** @var Space $response */
+        $response = $spacesServiceClient->createSpace($request);
+        return json_decode($response->serializeToJsonString());
+    }
+
+    public function getSpace($credentials, $space_name)
+    {
+        $spacesServiceClient = new SpacesServiceClient(['credentials' => $credentials]);
+
+        // Prepare the request message.
+        $request = new GetSpaceRequest();
+        $request->setName('spaces/' . $space_name);
+        // Call the API and handle any network failures.
+
+        /** @var Space $response */
+        $response = $spacesServiceClient->getSpace($request);
+        return ($response->serializeToJsonString());
+    }
+    public function listConference($credentials, $meetingCode,$timestamp)
+    {
+
+
+
+        $client = new ConferenceRecordsServiceClient(['credentials' => $credentials]);
+
+        $request = new ListConferenceRecordsRequest();
+        //is it bettter to use meeting_name? 
+        $request->setFilter('space.meeting_code =' . $meetingCode);
+        $request->setFilter( 'start_time >= '.$timestamp);
+        $response = $client->listConferenceRecords($request);
+        return ($response);
+    }
+
+    public function listRecordings($credentials, $conference_name)
+    {
+
+        $client = new ConferenceRecordsServiceClient(['credentials' => $credentials]);
+        $request = new ListRecordingsRequest();
+        $request->setParent($conference_name);
+
+        $response = $client->listRecordings($request);
+        return ($response);
+    }
+
+    public function listFileDrive($credentials)
+    {
+        $client = new Client(['credentials' => $credentials]);
+        $client->setScopes(Drive::DRIVE);
+        $service = new Drive($client);
+        // Print the names and IDs for up to 10 files.
+        $optParams = array(
+            'pageSize' => 10,
+            'q' => 'name = "Meet Recordings" and mimeType = "application/vnd.google-apps.folder"'
+        );
+        $results = $service->files->listFiles($optParams);
+
+        if (count($results->getFiles()) == 0) {
+            return false;
+        } else {
+            
+            foreach ($results->getFiles() as $file) {
+                $folder_id =  $file->getId();
+                //condivido la cartella con tutto il dominio Unife
+
+            }
         }
     }
-    public function get_user_oauth_client($overrideurl = false)
-    {
-        if ($this->client) {
-            return $this->client;
-        }
-        if ($overrideurl) {
-            $returnurl = $overrideurl;
-        } else {
-            $returnurl = new moodle_url('/mod/gmeet/oauth2callback.php');
-            $returnurl->param('callback', 'yes');
-            $returnurl->param('sesskey', sesskey());
-        }
 
+    public function shareFile($fileid,$credentials){
+        $client = new Client(['credentials' => $credentials]);
+        $client->setScopes(Drive::DRIVE);
+        $service = new Drive($client);
+        $domain_permission = new Google_Service_Drive_Permission(array(
+
+        ));
         
     }
-
-        /**
-     * Checks whether the user is authenticate or not.
-     *
-     * @return bool true when logged in.
-     */
-    public function check_login() {
-        $client = $this->get_user_oauth_client();
-        return $client->is_logged_in();
-    }
-
-     /**
-     * Print the login in a popup.
-     *
-     * @param array|null $attr Custom attributes to be applied to popup div.
-     */
-    public function print_login_popup($attr = null) {
-        global $OUTPUT;
-
-        $client = $this->get_user_oauth_client();
-        $url = new moodle_url($client->get_login_url());
-        $state = $url->get_param('state') . '&reloadparent=true';
-        $url->param('state', $state);
-
-        return html_writer::div('
-            <button class="btn btn-primary" onClick="javascript:window.open(\''.$client->get_login_url().'\',
-                \'Login\',\'height=600,width=599,top=0,left=0,menubar=0,location=0,directories=0,fullscreen=0\'
-            ); return false">'.get_string('logintoaccount', 'googlemeet').'</button>', 'mt-2');
-
-    }
-
-        /**
-     * Logout.
-     *
-     * @return string
-     */
-    public function logout() {
-        global $PAGE;
-
-        if ($this->check_login()) {
-            $url = new moodle_url($PAGE->url);
-            $client = $this->get_user_oauth_client();
-            $client->log_out();
-            $js = <<<EOD
-                <html>
-                <head>
-                    <script type="text/javascript">
-                        window.location = '{$url}'.replaceAll('&amp;','&')
-                    </script>
-                </head>
-                <body></body>
-                </html>
-            EOD;
-            die($js);
-        }
-    }
-
-        /**
-     * Store the access token.
-     */
-    public function callback() {
-        $client = $this->get_user_oauth_client();
-        // This will upgrade to an access token if we have an authorization code and save the access token in the session.
-        $client->is_logged_in();
-    }
-
-    public function print_user_info($scope = null) {
-        global $OUTPUT, $PAGE;
-
-        if (!$this->check_login()) {
-            return '';
-        }
-
-        $userauth = $this->get_user_oauth_client();
-        $userinfo = $userauth->get_userinfo();
-        $username = $userinfo['username'];
-        $name = $userinfo['firstname'].' '.$userinfo['lastname'];
-        $userpicture = base64_encode($userinfo['picture']);
-
-        $userurl = '#';
-        if ($scope == 'calendar') {
-            $userurl = new moodle_url('https://calendar.google.com/');
-        }
-        if ($scope == 'drive') {
-            $userurl = new moodle_url('https://drive.google.com/');
-        }
-
-        $logouturl = new moodle_url($PAGE->url);
-        $logouturl->param('logout', true);
-
-        $img = html_writer::img('data:image/jpeg;base64,'.$userpicture, '');
-        $out = html_writer::start_div('', ['id' => 'googlemeet_auth-info']);
-        $out .= html_writer::link($userurl, $img,
-            ['id' => 'googlemeet_picture-user', 'target' => '_blank', 'title' => get_string('manage', 'googlemeet')]
-        );
-        $out .= html_writer::start_div('', ['id' => 'googlemeet_user-name']);
-        $out .= html_writer::span(get_string('loggedinaccount', 'googlemeet'), '');
-        $out .= html_writer::span($name);
-        $out .= html_writer::span($username);
-        $out .= html_writer::end_div();
-        $out .= html_writer::link($logouturl,
-            $OUTPUT->pix_icon('logout', '', 'googlemeet', ['class' => 'm-0']),
-            ['class' => 'btn btn-secondary btn-sm', 'title' => get_string('logout', 'googlemeet')]
-        );
-
-        $out .= html_writer::end_div();
-
-        return $out;
-    }
-
-    public function get_credentails(){
-        $client = $this->get_user_oauth_client();
-        return $client->get_raw_userinfo();
-
-    }
-
 }

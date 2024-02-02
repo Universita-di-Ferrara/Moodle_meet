@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -22,10 +23,18 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+include_once(__DIR__ . '/../../vendor/autoload.php');
+require_once(__DIR__ . '/classes/google/GHandler.php');
 
-require_once($CFG->dirroot.'/course/moodleform_mod.php');
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
+
 use mod_gmeet\google\GHandler;
+use Google\Auth\OAuth2;
+use Google\Auth\Credentials\UserRefreshCredentials;
+use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
+use Google\Apps\Meet\V2beta\CreateSpaceRequest;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Module instance settings form.
@@ -34,48 +43,20 @@ use mod_gmeet\google\GHandler;
  * @copyright   2023 Your Name <you@example.com>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_gmeet_mod_form extends moodleform_mod {
+class mod_gmeet_mod_form extends moodleform_mod
+{
 
     /**
      * Defines forms elements
      */
-    public function definition() {
+    public function definition()
+    {
         global $CFG;
+
         $config = get_config('gmeet');
-        
+
         $mform = $this->_form;
-        $client = new GHandler();
 
-        $logout = optional_param('logout', 0, PARAM_BOOL);
-        if ($logout) {
-            $client->logout();
-        }
-
-        if (empty($this->current->instance)) {
-            $clientislogged = optional_param('client_islogged', false, PARAM_BOOL);
-
-            // Was logged in before submitting the form and the google session expired after submitting the form.
-            if ($clientislogged && !$client->check_login()) {
-                $mform->addElement('html', html_writer::div(get_string('sessionexpired', 'googlemeet') .
-                    $client->print_login_popup(), 'mdl-align alert alert-danger googlemeet_loginbutton'
-                ));
-
-                // Whether the customer is enabled and if not logged in to the Google account.
-            } else if ($client->enabled && !$client->check_login()) {
-                $mform->addElement('html', html_writer::div(get_string('logintoyourgoogleaccount', 'googlemeet') .
-                    $client->print_login_popup(), 'mdl-align alert alert-info googlemeet_loginbutton'
-                ));
-            }
-
-            // If is logged in, shows Google account information.
-            if ($client->check_login()) {
-                $mform->addElement('html', $client->print_user_info('calendar'));
-                $mform->addElement('hidden', 'client_islogged', true);
-            }
-
-        } else {
-            $mform->addElement('hidden', 'client_islogged', false);
-        }
         $mform->setType('client_islogged', PARAM_BOOL);
         // Adding the "general" fieldset, where all the common settings are shown.
         $mform->addElement('header', 'general', get_string('general', 'form'));

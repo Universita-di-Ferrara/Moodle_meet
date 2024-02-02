@@ -1,6 +1,5 @@
 <?php
 
-include_once __DIR__ . '/../../vendor/autoload.php';
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -25,29 +24,58 @@ include_once __DIR__ . '/../../vendor/autoload.php';
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_gmeet\google\GHandler;
+include_once __DIR__ . '/../../vendor/autoload.php';
 
-require_once(__DIR__ . '/../../config.php');
+require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
+use mod_gmeet\google\GHandler;
+use Google\Auth\OAuth2;
 use Google\Auth\Credentials\UserRefreshCredentials;
+global $SESSION;
 
-require_login();
+$clientSecretJson = json_decode(
+    file_get_contents('client_secret.json'),
+    true
+)['web'];
+$clientId = $clientSecretJson['client_id'];
+$clientSecret = $clientSecretJson['client_secret'];
+$redirectURI = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
+$scopes = "https://www.googleapis.com/auth/meetings.space.created";
 
-$client = new Google\Client();
-$client->setAuthConfig('client_secret.json');
-$redirect_uri = '' . new moodle_url('mod/gmeet/oauth2callback.php');
-$client->setRedirectUri('http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . $redirect_uri);
-$client->addScope("https://www.googleapis.com/auth/meetings.space.created");
-
+$oauth2 = new OAuth2([
+    'clientId' => $clientId,
+    'clientSecret' => $clientSecret,
+    'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
+    // Where to return the user to if they accept your request to access their account.
+    // You must authorize this URI in the Google API Console.
+    'redirectUri' => $redirectURI,
+    'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
+    'scope' => $scopes,
+]);
+$current_url_redirect = $SESSION->current_redirect;
 
 if (!isset($_GET['code'])) {
-    $auth_url = $client->createAuthUrl();
-    header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
+
+    $authenticationUrl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
+    header("Location: " . $authenticationUrl);
 } else {
-    $client->fetchAccessTokenWithAuthCode($_GET['code']);
-    $_SESSION['access_token'] = $client->getAccessToken();
-    
-    $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/index.php');
-    header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+
+    // With the code returned by the OAuth flow, we can retrieve the refresh token.
+    $oauth2->setCode($_GET['code']);
+    $authToken = $oauth2->fetchAuthToken();
+    $refreshToken = $authToken['access_token'];
+
+    // The UserRefreshCredentials will use the refresh token to 'refresh' the credentials when
+    // they expire.
+    $SESSION->credentials = new UserRefreshCredentials(
+        $scopes,
+        [
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
+            'refresh_token' => $refreshToken
+        ]
+    );
+   
+    header('Location: ' . filter_var($current_url_redirect, FILTER_SANITIZE_URL));
 }

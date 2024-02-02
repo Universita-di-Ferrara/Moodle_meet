@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/gmeet/db" VERSION="20231222" COMMENT="XMLDB file for Moodle mod_gmeet"
+<XMLDB PATH="mod/gmeet/db" VERSION="20240202" COMMENT="XMLDB file for Moodle mod_gmeet"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -13,10 +13,24 @@
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of when the instance was last modified."/>
         <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Activity description."/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field."/>
+        <FIELD NAME="google_url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Url della stanza Google meet"/>
+        <FIELD NAME="meeting_code" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Codice della stanza Google meet"/>
+        <FIELD NAME="last_sync" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="fk_course" TYPE="foreign" FIELDS="course" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="gmeet_recordings" COMMENT="Table for recordings Records">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="file_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="meet_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="fk_meet_id" TYPE="foreign" FIELDS="meet_id" REFTABLE="gmeet" REFFIELDS="id"/>
       </KEYS>
     </TABLE>
   </TABLES>

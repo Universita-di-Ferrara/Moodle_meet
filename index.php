@@ -1,8 +1,6 @@
 <?php
 
 include_once __DIR__ . '/../../vendor/autoload.php';
-
-
 use mod_gmeet\google\GHandler;
 use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
 use Google\Apps\Meet\V2beta\CreateSpaceRequest;
@@ -35,38 +33,46 @@ use Google\Client;
 // Require_login is not needed here.
 // phpcs:disable moodle.Files.RequireLogin.Missing
 require_once('../../config.php');
-
-
-
-
-//$redirect_uri = ''.new moodle_url('mod/gmeet/oauth2callback.php');
-$oauth_credentials = "client_secret.json";
 $clientSecretJson = json_decode(
     file_get_contents('client_secret.json'),
     true
 )['web'];
-$scopes = "https://www.googleapis.com/auth/meetings.space.created";
 $clientId = $clientSecretJson['client_id'];
 $clientSecret = $clientSecretJson['client_secret'];
-$client = new Google\Client();
-$client->setAuthConfig('client_secret.json');
-$client->addScope($scopes);
+$redirectURI = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
+$scopes = "https://www.googleapis.com/auth/meetings.space.created";
 
-if (isset($_SESSION['access_token']) && $_SESSION['access_token']) {
-    $_SESSION['credentials'] = new UserRefreshCredentials(
-        $scopes,
-        [
-            'client_id' => $clientId,
-            'client_secret' => $clientSecret,
-            'refresh_token' => $_SESSION['access_token']
-        ]
-    );
-    $client->setAccessToken($_SESSION['access_token']);
-    $spacesServiceClient = new SpacesServiceClient(['credentials'=>$_SESSION['credentials']]);
+$oauth2 = new OAuth2([
+    'clientId' => $clientId,
+    'clientSecret' => $clientSecret,
+    'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
+    // Where to return the user to if they accept your request to access their account.
+    // You must authorize this URI in the Google API Console.
+    'redirectUri' => $redirectURI,
+    'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
+    'scope' => $scopes,
+]);
+
+if (!isset($_SESSION['credentials']) || $_SESSION['credentials']->getLastReceivedToken()['expires_at'] < time()) {
+
+    $authenticationUrl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
+    header("Location: " . $authenticationUrl);
+}
+try {
+
+    $spacesServiceClient = new SpacesServiceClient(['credentials' => $_SESSION['credentials']]);
+    
+    // Prepare the request message.
     $request = new CreateSpaceRequest();
+    
+    // Call the API and handle any network failures.
+    
+    /** @var Space $response */
     $response = $spacesServiceClient->createSpace($request);
     printf('Response data: %s' . PHP_EOL, $response->serializeToJsonString());
-} else {
-    $redirect_uri = '' . new moodle_url('oauth2callback.php');
-    header('Location: ' . filter_var($redirect_uri, FILTER_SANITIZE_URL));
+
+
+}catch (Exception $e) {
+    error_log($e);
 }
+
