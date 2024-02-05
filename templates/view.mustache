@@ -34,6 +34,8 @@
     class="btn btn-primary"
     href={{meetingUrl}}
     role="button"
+    target="_blank"
+    rel="noreferrer noopener"
     >Entra nella stanza</a
 >
 <form class="d-flex" action="sync_recordings.php" method="post">
@@ -52,11 +54,10 @@
 <div
 class="table-responsive recordings-table rounded-3"
 >
-<table
-class="table table-primary "
->
+<table class="table mt-3">
 <thead>
     <tr>
+        <th scope="col">Nome registrazione</th>
         <th scope="col">Link</th>
         
     </tr>
@@ -64,12 +65,15 @@ class="table table-primary "
 <tbody class="recordings_tbody">
             {{#meetingRecordings}}
             <tr class="">
+            <td></td>
                 <td scope="row"><a
                     name=""
                     id=""
                     class="btn btn-primary"
                     href="{{.}}"
                     role="button"
+                    target="_blank"
+                    rel="noreferrer noopener"
                     >Registrazione</a
                 >
             </td>

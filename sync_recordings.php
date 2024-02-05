@@ -50,11 +50,11 @@ if($_POST){
     if (isset($moduleinstance->last_sync)) $timestamp_google = $moduleinstance->last_sync;
 
 
-
     $meet_recordings_array = [];
     $Google_handler = new GHandler();
     $response_conferenceList = $Google_handler->listConference($SESSION->credentials,$moduleinstance->meeting_code,$timestamp_google);
     foreach ($response_conferenceList as $element) {
+        error_log($element->serializeToJsonString());
         $recordings  = $Google_handler->listRecordings($SESSION->credentials,$element->getName());
         foreach ($recordings as $record){
             //controllo che non esista già il record (es più sync al giorno)
@@ -70,6 +70,8 @@ if($_POST){
                 $dataobj->file_id = $record->getDriveDestination()->getFile();
                 $dataobj->meet_id = $instance_id;
                 $DB->insert_record('gmeet_recordings',$dataobj);
+                $Google_handler->shareFile($record->getDriveDestination()->getFile(),$SESSION->credentials);
+
             }
            
         }

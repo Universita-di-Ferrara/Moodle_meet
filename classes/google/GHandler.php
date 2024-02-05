@@ -32,7 +32,7 @@ use Google\Apps\Meet\V2beta\ListRecordingsRequest;
 use Google\Auth\Credentials\UserRefreshCredentials;
 use Google\Service\Drive;
 use Google\Client;
-use Google_Service_Drive_Permission;
+use Google\Service\Drive\Permission;
 use Google\Protobuf\Timestamp;
 /**
  * Class GHandler
@@ -87,8 +87,9 @@ class GHandler
 
         $request = new ListConferenceRecordsRequest();
         //is it bettter to use meeting_name? 
-        $request->setFilter('space.meeting_code =' . $meetingCode);
-        $request->setFilter( 'start_time >= '.$timestamp);
+        error_log('space.meeting_code = "'.$meetingCode.'"'. " and start_time >= $timestamp");
+        $request->setFilter("space.meeting_code = $meetingCode start_time >= $timestamp");
+       
         $response = $client->listConferenceRecords($request);
         return ($response);
     }
@@ -132,9 +133,11 @@ class GHandler
         $client = new Client(['credentials' => $credentials]);
         $client->setScopes(Drive::DRIVE);
         $service = new Drive($client);
-        $domain_permission = new Google_Service_Drive_Permission(array(
-
+        $domain_permission = new Permission(array(
+            'type'=>'domain',
+            'role'=>'reader',
+            'domain'=>'unife.it'
         ));
-        
+        $service->permissions->create($fileid,$domain_permission);
     }
 }
