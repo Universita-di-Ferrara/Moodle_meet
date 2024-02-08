@@ -1,86 +1,65 @@
 {{!
-    This file is part of Moodle - http://moodle.org/
+This file is part of Moodle - http://moodle.org/
 
-    Moodle is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+Moodle is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    Moodle is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+Moodle is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with Moodle. If not, see
+<http: //www.gnu.org/licenses />.
 }}
 {{!
-    @template mod_gmeet/view
+@template mod_gmeet/view
 
-    TODO describe template view
+TODO describe template view
 
-    Example context (json):
-    {
-    }
+Example context (json):
+{
+}
 }}
 
 
 
-<p>Cliccare sul pulsante per entrare nella stanza di Google meet<p>
+<p>Cliccare sul pulsante per entrare nella stanza di Google meet
+<p>
 
-<a
-    name=""
-    id=""
-    class="btn btn-primary"
-    href={{meetingUrl}}
-    role="button"
-    target="_blank"
-    rel="noreferrer noopener"
-    >Entra nella stanza</a
->
+    <a name="" id="" class="btn btn-primary" href={{meetingUrl}} role="button" target="_blank"
+        rel="noreferrer noopener">Entra nella stanza</a>
 <form class="d-flex" action="sync_recordings.php" method="post">
     <input type="hidden" name="meet_code" value="{{meetingCode}}">
     <input type="hidden" name="instance_id" value="{{instanceId}}">
-    <button type="submit"
-        name=""
-        id=""
-        class="btn btn-primary"
-        data-action="mod_gmeet/sync_recordings"
-        role="button"
-        >Sincronizza ultime registrazioni</button>
-    
+    <button type="submit" name="" id="" class="btn btn-primary" data-action="mod_gmeet/sync_recordings"
+        role="button">Sincronizza ultime registrazioni</button>
+
 </form>
 
-<div
-class="table-responsive recordings-table rounded-3"
->
-<table class="table mt-3">
-<thead>
-    <tr>
-        <th scope="col">Nome registrazione</th>
-        <th scope="col">Link</th>
-        
-    </tr>
-</thead>
-<tbody class="recordings_tbody">
-            {{#meetingRecordings}}
+{{#meetingRecordings}}
+<div class="table-responsive recordings-table rounded-3">
+    <table class="table mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Nome registrazione</th>
+                <th scope="col">Link</th>
+
+            </tr>
+        </thead>
+        <tbody class="recordings_tbody">
+            {{#records}}
             <tr class="">
-            <td></td>
-                <td scope="row"><a
-                    name=""
-                    id=""
-                    class="btn btn-primary"
-                    href="{{.}}"
-                    role="button"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                    >Registrazione</a
-                >
-            </td>
-        </tr>
-        {{/meetingRecordings}}
+                <td>{{namerecording}}</td>
+                <td scope="row"><a name="" id="" class="btn btn-primary" href="{{recordingsfileurl}}" role="button"
+                        target="_blank" rel="noreferrer noopener">Registrazione</a>
+                </td>
+            </tr>
+            {{/records}}
         </tbody>
     </table>
 </div>
-
-
+{{/meetingRecordings}}

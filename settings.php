@@ -18,7 +18,7 @@
  * TODO describe file settings
  *
  * @package    mod_gmeet
- * @copyright  2024 YOUR NAME <your@email.com>
+ * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die();

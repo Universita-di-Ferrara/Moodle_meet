@@ -20,7 +20,7 @@ namespace mod_gmeet\event;
  * Event course_module_instance_list_viewed
  *
  * @package    mod_gmeet
- * @copyright  2023 YOUR NAME <your@email.com>
+ * @copyright  2024 Università degli Studi di Ferrara - Unife 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {
@@ -33,7 +33,7 @@ class course_module_instance_list_viewed extends \core\event\course_module_insta
      */
     public static function create_from_course(\stdClass $course) {
         $params = [
-            'context' => \context_course::instance($course->id)
+            'context' => \context_course::instance($course->id),
         ];
         /** @var course_module_instance_list_viewed $event */
         $event = static::create($params);

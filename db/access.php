@@ -21,37 +21,37 @@
  *
  * @package    mod_gmeet
  * @category   access
- * @copyright  2023 YOUR NAME <your@email.com>
+ * @copyright  2024 Università degli Studi di Ferrara - Unife 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
+$capabilities = [
     // The standard capability mod/offlinequiz:addinstance.
-    'mod/gmeet:addinstance' => array(
+    'mod/gmeet:addinstance' => [
         'riskbitmask' => RISK_XSS,
 
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
+        'archetypes' => [
                 'editingteacher' => CAP_ALLOW,
-                'manager' => CAP_ALLOW
-        )
-    ),
+                'manager' => CAP_ALLOW,
+        ],
+        ],
 
     // Ability to see that the offline quiz exists, and the basic information
     // about it, for example the start date and time limit.
-    'mod/gmeet:view' => array(
+    'mod/gmeet:view' => [
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => array(
+        'legacy' => [
             'guest' => CAP_ALLOW,
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        )
-    ),
-);
+            'manager' => CAP_ALLOW, ],
+        ],
+];
+

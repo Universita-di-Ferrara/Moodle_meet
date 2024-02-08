@@ -27,63 +27,63 @@ use Google\Apps\Meet\V2beta\ListRecordingsRequest;
 use Google\Auth\Credentials\UserRefreshCredentials;
 use Google\Apps\Meet\V2beta\Client\ConferenceRecordsServiceClient;
 use Google\Protobuf\Timestamp;
-include_once __DIR__ . '/../../vendor/autoload.php';
 
+require_once(__DIR__ . '/../../vendor/autoload.php');
 require('../../config.php');
 
+
 require_login();
-if($_POST){
+if ($_POST) {
 
+    $meetcode = $_POST['meet_code'];
+    $instanceid = $_POST['instance_id'];
 
-    $meet_code = $_POST['meet_code'];
-    $instance_id = $_POST['instance_id'];
+    // Prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync.
+    $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIST);
 
-    //prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync
-    $moduleinstance = $DB->get_record('gmeet', array('id' => $instance_id), '*', MUST_EXIST);
+    // Default faccio il retrieve di tutte le conference.
 
+    $timestampgoogle = new Timestamp();
+    $timestampgoogle = $timestampgoogle->serializeToJsonString();
 
-    //default faccio il retrieve di tutte le conference
-    
-    $timestamp_google = new Timestamp();
-    $timestamp_google = $timestamp_google->serializeToJsonString();
-    //se il campo last_sync è valorizzato, prendo quello come timestamp
-    if (isset($moduleinstance->last_sync)) $timestamp_google = $moduleinstance->last_sync;
+    // Se il campo last_sync è valorizzato, prendo quello come timestamp.
+    if (isset($moduleinstance->last_sync)) {
+        $timestampgoogle = $moduleinstance->last_sync;
+    }
 
-
-    $meet_recordings_array = [];
-    $Google_handler = new GHandler();
-    $response_conferenceList = $Google_handler->listConference($SESSION->credentials,$moduleinstance->meeting_code,$timestamp_google);
-    foreach ($response_conferenceList as $element) {
-        error_log($element->serializeToJsonString());
-        $recordings  = $Google_handler->listRecordings($SESSION->credentials,$element->getName());
-        foreach ($recordings as $record){
-            //controllo che non esista già il record (es più sync al giorno)
-            error_log($record->serializeToJsonString());
-            $text_compare_file_id = $DB->sql_compare_text('file_id');
-            $text_compare_file_id_placeholder = $DB->sql_compare_text(':file_id');
-            if (!($DB->record_exists_sql("select * from {gmeet_recordings} where {$text_compare_file_id} = {$text_compare_file_id_placeholder}",
-                [
-                    'file_id'=>$record->getDriveDestination()->getFile(),
-                ]))){
-                // devo andare a salvare i valori in db dei recordings
+    $googlehandler = new GHandler();
+    $responseconferencelist = $googlehandler->list_conference($SESSION->credentials, $moduleinstance->meeting_code, $timestampgoogle);
+    foreach ($responseconferencelist as $element) {
+        $recordings  = $googlehandler->list_recordings($SESSION->credentials, $element->getName());
+        foreach ($recordings as $record) {
+            // Controllo che non esista già il record (es più sync al giorno).
+            $textcomparefileid = $DB->sql_compare_text('file_id');
+            $textcomparefileidplaceholder = $DB->sql_compare_text(':file_id');
+            $sql = "select * from {gmeet_recordings} where {$textcomparefileid} = {$textcomparefileidplaceholder}";
+            $fileexist = $DB->record_exists_sql($sql, ['file_id' => $record->getDriveDestination()->getFile()]);
+            if (!($fileexist)) {
+                //giornata e orario della registrazione
+                $datetime = $record->getStartTime()->toDateTime();
+                $giorno = $datetime->format("d-m-Y");
+                $orario = $datetime->format("G:i");
+                // Devo andare a salvare i valori in db dei recordings.
                 $dataobj = new stdClass();
                 $dataobj->file_id = $record->getDriveDestination()->getFile();
-                $dataobj->meet_id = $instance_id;
-                $DB->insert_record('gmeet_recordings',$dataobj);
-                $Google_handler->shareFile($record->getDriveDestination()->getFile(),$SESSION->credentials);
+                $dataobj->meet_id = $instanceid;
+                $dataobj->name = "Registrazione del $giorno alle $orario";
+                $DB->insert_record('gmeet_recordings', $dataobj);
+                $googlehandler->share_file($record->getDriveDestination()->getFile(), $SESSION->credentials);
 
             }
-           
         }
     }
-    
-    //dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync
-    $timestamp_google = new Timestamp();
-    $timestamp_google->setSeconds(strtotime(date("d-m-Y")));
-    $moduleinstance->last_sync = $timestamp_google->serializeToJsonString();
+    // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
+    $timestampgoogle = new Timestamp();
+    $timestampgoogle->setSeconds(strtotime(date("d-m-Y")));
+    $moduleinstance->last_sync = $timestampgoogle->serializeToJsonString();
     $DB->update_record('gmeet', $moduleinstance);
 
-    header('location:'.$SESSION->redirect_url);
+    header('location:'.$SESSION->redirecturl);
     exit();
 }
 

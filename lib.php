@@ -18,7 +18,7 @@
  * Library of interface functions and constants.
  *
  * @package     mod_gmeet
- * @copyright   2023 Your Name <you@example.com>
+ * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -85,12 +85,12 @@ function gmeet_update_instance($moduleinstance, $mform = null) {
 function gmeet_delete_instance($id) {
     global $DB;
 
-    $exists = $DB->get_record('gmeet', array('id' => $id));
+    $exists = $DB->get_record('gmeet', ['id' => $id]);
     if (!$exists) {
         return false;
     }
 
-    $DB->delete_records('gmeet', array('id' => $id));
+    $DB->delete_records('gmeet', ['id' => $id]);
 
     return true;
 }

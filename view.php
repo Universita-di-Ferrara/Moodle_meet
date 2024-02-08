@@ -18,10 +18,10 @@
  * Prints an instance of mod_gmeet.
  *
  * @package     mod_gmeet
- * @copyright   2023 Your Name <you@example.com>
+ * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-include_once __DIR__ . '/../../vendor/autoload.php';
+require_once(__DIR__ . '/../../vendor/autoload.php');
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
@@ -41,91 +41,94 @@ $g = optional_param('g', 0, PARAM_INT);
 
 if ($id) {
     $cm = get_coursemodule_from_id('gmeet', $id, 0, false, MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
-    $moduleinstance = $DB->get_record('gmeet', array('id' => $cm->instance), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('gmeet', ['id' => $cm->instance], '*', MUST_EXIST);
 } else {
-    $moduleinstance = $DB->get_record('gmeet', array('id' => $g), '*', MUST_EXIST);
-    $course = $DB->get_record('course', array('id' => $moduleinstance->course), '*', MUST_EXIST);
+    $moduleinstance = $DB->get_record('gmeet', ['id' => $g], '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $moduleinstance->course], '*', MUST_EXIST);
     $cm = get_coursemodule_from_instance('gmeet', $moduleinstance->id, $course->id, false, MUST_EXIST);
 }
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-$Google_handler = new GHandler();
+$googlehandler = new GHandler();
 
-$PAGE->set_url('/mod/gmeet/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
 
-$SESSION->redirect_url = $PAGE->url;
-//se non ho popolato il campo Google url nella tabella gmeet di questa istanza allora vado a creare un nuovo spazio
+$SESSION->redirecturl = $PAGE->url;
 
-
-$clientSecretJson = json_decode(
+$clientsecretjson = json_decode(
     file_get_contents('client_secret.json'),
     true
 )['web'];
-$clientId = $clientSecretJson['client_id'];
-$clientSecret = $clientSecretJson['client_secret'];
-$redirectURI = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
-$current_url = (string)new moodle_url('/mod/gmeet/view.php', array('id' => $cm->id));
-$SESSION->current_redirect = $current_url;
+$clientid = $clientsecretjson['client_id'];
+$clientsecret = $clientsecretjson['client_secret'];
+$redirecturi = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
+$currenturl = (string)new moodle_url('/mod/gmeet/view.php', ['id' => $cm->id]);
+$SESSION->currentredirect = $currenturl;
 $scopes = "https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/drive";
 
 $oauth2 = new OAuth2([
-    'clientId' => $clientId,
-    'clientSecret' => $clientSecret,
+    'clientId' => $clientid,
+    'clientSecret' => $clientsecret,
     'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
     // Where to return the user to if they accept your request to access their account.
     // You must authorize this URI in the Google API Console.
-    'redirectUri' => $redirectURI,
+    'redirectUri' => $redirecturi,
     'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
-    'scope' => $scopes
+    'scope' => $scopes,
 ]);
 if (!isset($SESSION->credentials)) {
-    $authenticationUrl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
-    header("Location: " . $authenticationUrl);
+    $authenticationurl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
+    header("Location: " . $authenticationurl);
     die();
 }
 
 try {
     $SESSION->credentials->fetchAuthToken();
 } catch (Exception $e) {
-    $authenticationUrl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
-    header("Location: " . $authenticationUrl);
+    $authenticationurl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
+    header("Location: " . $authenticationurl);
     die();
 }
 if (!$moduleinstance->google_url) {
 
 
-    $meet_info = $Google_handler->createSpace($SESSION->credentials);
+    $meetinfo = $googlehandler->create_space($SESSION->credentials);
 
-    $moduleinstance->google_url = $meet_info->meetingUri;
-    $moduleinstance->meeting_code = $meet_info->meetingCode;
+    $moduleinstance->google_url = $meetinfo->meetingUri;
+    $moduleinstance->meeting_code = $meetinfo->meetingCode;
 
     $DB->update_record('gmeet', $moduleinstance);
 }
 
 
-$meet_recordings_array = [];
+$meetrecordingsarray = [];
 
-if ($data_records = $DB->get_records('gmeet_recordings',array('meet_id' => $moduleinstance->id))){
+if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleinstance->id])) {
 
-    foreach ($data_records as $record){
-        $recordings_file_url = "https://drive.google.com/file/d/{$record->file_id}/view?usp=drive_web";
-        array_push($meet_recordings_array,$recordings_file_url);
+    foreach ($datarecords as $record) {
+        $record = [
+            "recordingsfileurl" => "https://drive.google.com/file/d/{$record->file_id}/view?usp=drive_web",
+            "namerecording" => $record->name,
+
+        ];
+
+        array_push($meetrecordingsarray, $record);
     }
 
 }
 
 
-$space_info = [
-    'instance_id'=>$moduleinstance->id,
-    'meeting_url'=>$moduleinstance->google_url,
-    'meeting_code'=>$moduleinstance->meeting_code,
-    'meeting_recordings' => $meet_recordings_array
+$spaceinfo = [
+    'instance_id' => $moduleinstance->id,
+    'meeting_url' => $moduleinstance->google_url,
+    'meeting_code' => $moduleinstance->meeting_code,
+    'meeting_recordings' =>   ["records" => $meetrecordingsarray],
 ];
 
 
@@ -136,7 +139,7 @@ $space_info = [
 echo $OUTPUT->header();
 
 $output = $PAGE->get_renderer('mod_gmeet');
-$renderable = new mod_gmeet\output\view($space_info);
+$renderable = new mod_gmeet\output\view($spaceinfo);
 
 echo $output->render($renderable);
 

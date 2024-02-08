@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -19,38 +18,25 @@
  * The main mod_gmeet configuration form.
  *
  * @package     mod_gmeet
- * @copyright   2023 Your Name <you@example.com>
+ * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-include_once(__DIR__ . '/../../vendor/autoload.php');
-require_once(__DIR__ . '/classes/google/GHandler.php');
-
-require_once($CFG->dirroot . '/course/moodleform_mod.php');
-
-use mod_gmeet\google\GHandler;
-use Google\Auth\OAuth2;
-use Google\Auth\Credentials\UserRefreshCredentials;
-use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
-use Google\Apps\Meet\V2beta\CreateSpaceRequest;
-
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot . '/course/moodleform_mod.php');
 
 /**
  * Module instance settings form.
  *
  * @package     mod_gmeet
- * @copyright   2023 Your Name <you@example.com>
+ * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class mod_gmeet_mod_form extends moodleform_mod
-{
-
+class mod_gmeet_mod_form extends moodleform_mod {
     /**
      * Defines forms elements
      */
-    public function definition()
-    {
+    public function definition() {
         global $CFG;
 
         $config = get_config('gmeet');
@@ -62,7 +48,7 @@ class mod_gmeet_mod_form extends moodleform_mod
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
         // Adding the standard "name" field.
-        $mform->addElement('text', 'name', get_string('gmeetname', 'mod_gmeet'), array('size' => '64'));
+        $mform->addElement('text', 'name', get_string('gmeetname', 'mod_gmeet'), ['size' => '64']);
 
         if (!empty($CFG->formatstringstriptags)) {
             $mform->setType('name', PARAM_TEXT);

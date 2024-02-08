@@ -88,4 +88,20 @@ function xmldb_gmeet_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024020201, 'gmeet');
     }
 
+    if ($oldversion < 2024020801) {
+
+        // Define field name to be added to gmeet_recordings.
+        $table = new xmldb_table('gmeet_recordings');
+        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, null, null, null, 'meet_id');
+
+        // Conditionally launch add field name.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Gmeet savepoint reached.
+        upgrade_mod_savepoint(true, 2024020801, 'gmeet');
+    }
+
+
 }

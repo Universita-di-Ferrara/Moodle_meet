@@ -20,11 +20,11 @@ namespace mod_gmeet\event;
  * Class course_module_viewed
  *
  * @package    mod_gmeet
- * @copyright  2023 YOUR NAME <your@email.com>
+ * @copyright  2024 Università degli Studi di Ferrara - Unife 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_module_viewed extends \core\event\course_module_viewed{
-        /**
+class course_module_viewed extends \core\event\course_module_viewed {
+    /**
      * Init method.
      *
      * @return void

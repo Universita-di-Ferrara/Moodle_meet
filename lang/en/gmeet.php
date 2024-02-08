@@ -19,7 +19,7 @@
  *
  * @package     mod_gmeet
  * @category    string
- * @copyright   2023 Your Name <you@example.com>
+ * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

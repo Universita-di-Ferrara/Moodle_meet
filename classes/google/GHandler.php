@@ -38,106 +38,104 @@ use Google\Protobuf\Timestamp;
  * Class GHandler
  *
  * @package    mod_gmeet
- * @copyright  2024 YOUR NAME <your@email.com>
+ * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class GHandler
-{
+class GHandler {
 
-
-    public function __construct()
-    {
-    }
-
-
-
-    public function createSpace($credentials)
-    {
-        $spacesServiceClient = new SpacesServiceClient(['credentials' => $credentials]);
+    /**
+     * Create a new meeting space
+     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
+     * @return array json_decoded space
+     */
+    public function create_space($credentials) {
+        $spacesserviceclient = new SpacesServiceClient(['credentials' => $credentials]);
 
         // Prepare the request message.
         $request = new CreateSpaceRequest();
 
         // Call the API and handle any network failures.
-        // TO DO: limit access only to domain users
         /** @var Space $response */
-        $response = $spacesServiceClient->createSpace($request);
+        $response = $spacesserviceclient->createSpace($request);
         return json_decode($response->serializeToJsonString());
     }
 
-    public function getSpace($credentials, $space_name)
-    {
-        $spacesServiceClient = new SpacesServiceClient(['credentials' => $credentials]);
+    /**
+     * Get space by his name
+     *
+     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
+     * @param string $spacename space name
+     * @return string space info 
+     * 
+     **/
+    public function get_space($credentials, $spacename) {
+        $spacesserviceclient = new SpacesServiceClient(['credentials' => $credentials]);
 
         // Prepare the request message.
         $request = new GetSpaceRequest();
-        $request->setName('spaces/' . $space_name);
+        $request->setName('spaces/' . $spacename);
         // Call the API and handle any network failures.
 
         /** @var Space $response */
-        $response = $spacesServiceClient->getSpace($request);
+        $response = $spacesserviceclient->getSpace($request);
         return ($response->serializeToJsonString());
     }
-    public function listConference($credentials, $meetingCode,$timestamp)
-    {
-
-
+    /**
+     * List all conference filtered by $meetingcode and start_time >= $timestamp
+     * 
+     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
+     * @param string $meetingcode meeting_code
+     * @param Google\Protobuf\Timestamp $timestamp timestamp of day from which start filtering
+     *  
+     * @return array all conferences filtered
+     */
+    public function list_conference($credentials, $meetingcode, $timestamp) {
 
         $client = new ConferenceRecordsServiceClient(['credentials' => $credentials]);
 
         $request = new ListConferenceRecordsRequest();
-        //is it bettter to use meeting_name? 
-        error_log('space.meeting_code = "'.$meetingCode.'"'. " and start_time >= $timestamp");
-        $request->setFilter("space.meeting_code = $meetingCode start_time >= $timestamp");
-       
+        // Is it bettter to use meeting_name?
+        $request->setFilter("space.meeting_code = $meetingcode start_time >= $timestamp");
+
         $response = $client->listConferenceRecords($request);
         return ($response);
     }
 
-    public function listRecordings($credentials, $conference_name)
-    {
+    /**
+     * List all recordings filtered by $conferencename 
+     * 
+     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
+     * @param string $conferencename conference name
+     *  
+     * @return array all recordings filtered
+     */
+    public function list_recordings($credentials, $conferencename) {
 
         $client = new ConferenceRecordsServiceClient(['credentials' => $credentials]);
         $request = new ListRecordingsRequest();
-        $request->setParent($conference_name);
+        $request->setParent($conferencename);
 
         $response = $client->listRecordings($request);
         return ($response);
     }
 
-    public function listFileDrive($credentials)
-    {
+    /**
+     * Share file with unife domain
+     * 
+     * @param string $fileid file id to share with domain
+     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
+     *  
+     * @return void
+     */
+    public function share_file($fileid, $credentials) {
         $client = new Client(['credentials' => $credentials]);
         $client->setScopes(Drive::DRIVE);
         $service = new Drive($client);
-        // Print the names and IDs for up to 10 files.
-        $optParams = array(
-            'pageSize' => 10,
-            'q' => 'name = "Meet Recordings" and mimeType = "application/vnd.google-apps.folder"'
-        );
-        $results = $service->files->listFiles($optParams);
-
-        if (count($results->getFiles()) == 0) {
-            return false;
-        } else {
-            
-            foreach ($results->getFiles() as $file) {
-                $folder_id =  $file->getId();
-                //condivido la cartella con tutto il dominio Unife
-
-            }
-        }
-    }
-
-    public function shareFile($fileid,$credentials){
-        $client = new Client(['credentials' => $credentials]);
-        $client->setScopes(Drive::DRIVE);
-        $service = new Drive($client);
-        $domain_permission = new Permission(array(
-            'type'=>'domain',
-            'role'=>'reader',
-            'domain'=>'unife.it'
-        ));
-        $service->permissions->create($fileid,$domain_permission);
+        $domainpermission = new Permission([
+            'type' => 'domain',
+            'role' => 'reader',
+            'domain' => 'unife.it',
+        ]);
+        $service->permissions->create($fileid, $domainpermission);
     }
 }
