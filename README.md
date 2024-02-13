@@ -22,6 +22,14 @@ Prima di installare il plugin sarà necessario effettuare delle configurazioni i
 
 4. Scaricare e inserire il file .json delle credenziali appena create all'interno della folder del plugin, rinominandolo **client_secret.json**
 
+5. Installare tramite *composer* i pacchetti **google/apps-meet**  e **google/apiclient:^2.0** 
+   ```
+   composer require google/apps-meet
+
+   composer require google/apiclient:^2.0
+   ```
+
+
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
