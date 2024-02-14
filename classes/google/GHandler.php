@@ -25,6 +25,9 @@ use stdClass;
 use Google\Auth\OAuth2;
 use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
 use Google\Apps\Meet\V2beta\Client\ConferenceRecordsServiceClient;
+use Google\Apps\Meet\V2beta\SpaceConfig;
+use Google\Apps\Meet\V2beta\SpaceConfig\AccessType;
+use Google\Apps\Meet\V2beta\SpaceConfig\EntryPointAccess;
 use Google\Apps\Meet\V2beta\GetSpaceRequest;
 use Google\Apps\Meet\V2beta\CreateSpaceRequest;
 use Google\Apps\Meet\V2beta\ListConferenceRecordsRequest;
@@ -57,6 +60,8 @@ class GHandler {
         // Call the API and handle any network failures.
         /** @var Space $response */
         $response = $spacesserviceclient->createSpace($request);
+        $configspace = new SpaceConfig(['access_type' => AccessType::TRUSTED, 'entry_point_access' => EntryPointAccess::ALL]);
+        $response->setConfig($configspace);
         return json_decode($response->serializeToJsonString());
     }
 
