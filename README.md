@@ -29,6 +29,7 @@ Prima di installare il plugin sarà necessario effettuare delle configurazioni i
    composer require google/apiclient:^2.0
    ```
 
+6. ATTENZIONE: Alla riga 142 del file *GHandler.php* cambiare il dominio di appartenenza dei file nel proprio
 
 ## Installing via uploaded ZIP file ##
 
