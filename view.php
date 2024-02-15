@@ -21,15 +21,19 @@
  * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+// Richiama autoloader per le classi installate con composer
+// Errore segnalato da Codechecker
 require_once(__DIR__ . '/../../vendor/autoload.php');
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
+// Classi Google
 use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
 use Google\Apps\Meet\V2beta\CreateSpaceRequest;
 use Google\Auth\Credentials\UserRefreshCredentials;
 use Google\Auth\OAuth2;
 
+// Classe plugin
 use mod_gmeet\google\GHandler;
 
 // Course module id.
@@ -38,7 +42,7 @@ $id = optional_param('id', 0, PARAM_INT);
 // Activity instance id.
 $g = optional_param('g', 0, PARAM_INT);
 
-
+// Recupera l'istanza dell'attività
 if ($id) {
     $cm = get_coursemodule_from_id('gmeet', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -53,13 +57,16 @@ $modulecontext = context_module::instance($cm->id);
 
 $googlehandler = new GHandler();
 
+// Renderizzazione della pagina dell'attività
 $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
-
+// Impostazione url nella sessione
 $SESSION->redirecturl = $PAGE->url;
+
+// File caricato attualmente in root (verrà sostituito dal recupero diretto dall'oAuth senza caricamento)
 
 $clientsecretjson = json_decode(
     file_get_contents('client_secret.json'),
@@ -67,6 +74,7 @@ $clientsecretjson = json_decode(
 )['web'];
 $clientid = $clientsecretjson['client_id'];
 $clientsecret = $clientsecretjson['client_secret'];
+// !!! da rimuovere. hardcode ambiente di sviluppo.
 $redirecturi = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
 $currenturl = (string)new moodle_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $SESSION->currentredirect = $currenturl;
