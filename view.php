@@ -116,8 +116,8 @@ if (!$moduleinstance->google_url) {
 
 
 $meetrecordingsarray = [];
-
 if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleinstance->id])) {
+    $meetrecordingsarray = ['records' => []];
 
     foreach ($datarecords as $record) {
         $record = [
@@ -126,17 +126,17 @@ if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleins
 
         ];
 
-        array_push($meetrecordingsarray, $record);
+        array_push($meetrecordingsarray['records'], $record);
     }
 
-}
 
+}
 
 $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'meeting_url' => $moduleinstance->google_url,
     'meeting_code' => $moduleinstance->meeting_code,
-    'meeting_recordings' =>   ["records" => $meetrecordingsarray],
+    'meeting_recordings' =>   $meetrecordingsarray,
 ];
 
 
