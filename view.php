@@ -75,7 +75,7 @@ $clientsecretjson = json_decode(
 $clientid = $clientsecretjson['client_id'];
 $clientsecret = $clientsecretjson['client_secret'];
 // !!! da rimuovere. hardcode ambiente di sviluppo.
-$redirecturi = 'http://' . $_SERVER['HTTP_HOST'] . '/moodle401/' . new moodle_url('mod/gmeet/oauth2callback.php');
+$redirecturi = $CFG->wwwroot .'/'.new moodle_url('mod/gmeet/oauth2callback.php');
 $currenturl = (string)new moodle_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $SESSION->currentredirect = $currenturl;
 $scopes = "https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/drive";
