@@ -41,7 +41,7 @@ $clientsecretjson = json_decode(
 )['web'];
 $clientid = $clientsecretjson['client_id'];
 $clientsecret = $clientsecretjson['client_secret'];
-$redirecturi = $CFG->wwwroot .'/'. new moodle_url('mod/gmeet/oauth2callback.php');
+$redirecturi = (string) new moodle_url('/mod/gmeet/oauth2callback.php');
 $scopes = "https://www.googleapis.com/auth/meetings.space.created";
 
 $oauth2 = new OAuth2([

@@ -103,5 +103,5 @@ function xmldb_gmeet_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2024020801, 'gmeet');
     }
 
-
+    return true;
 }
