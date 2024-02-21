@@ -26,16 +26,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'google_meet';
-$string['modulename'] = 'google_meet_space';
-$string['gmeetname'] = 'Nome stanza';
+$string['modulename'] = 'Google Meet';
+$string['gmeetname'] = 'Meeting room name';
 $string['modulenameplural'] = 'google_meets';
 $string['gmeetname_help'] = 'google_meet_help';
-$string['gmeetsettings'] = 'impostazioni della stanza meet';
-$string['gmeetfieldset'] = 'campi del modulo gmeet';
-$string['no$gmeetinstances'] = 'non sono presenti istanze di gmeet module';
-$string['gmeet:addinstance'] = 'Add an instance of gmeet';
-$string['gmeet:view'] = 'visualizza le istance di gmeet';
+$string['gmeetsettings'] = 'Meeting room settings';
+$string['gmeetfieldset'] = 'settings fields';
+$string['no$gmeetinstances'] = 'No instances of google meet mod';
+$string['gmeet:addinstance'] = 'Add an instance of google meet mod';
+$string['gmeet:view'] = 'List all instace of gmeet mod';
 $string['pluginadministration'] = 'Google meet administration';
-$string['issuerid'] = 'Servizio di OAuth';
+$string['issuerid'] = 'Oauth issuer';
 $string['issuerid_desc'] = '<a href="https://github.com/ronefel/moodle-mod_googlemeet/wiki/How-to-create-Client-ID-and-Client-Secret" target="_blank">How to set up an OAuth Service</a>';
+$string['domain_setting_name'] = "Google domain which it 's shared recordings with";
+$string['domain_setting_des'] = "Please, set your own google domain to share recordings with user inside it";
 
