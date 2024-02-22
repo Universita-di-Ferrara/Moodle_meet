@@ -5,31 +5,26 @@ Modulo di attvità Google meet: creazione di una stanza meet per conferenze.
 Tramite il seguente plugin, sarà possibilie creare una nuova attività in un corso, la quale permetterà l'accesso ad una stanza meet.
 Oltre al link di accesso al meet, sarà possibile visualizzare tutte le registrazione effettuate per quel determinato spazio (modalità sincrona)
 
-Il plugin utilizza le API di Google Meet attualmente in beta
-
 ## Configurazioni iniziali
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
-1. Assicurarsi di aver aderito al programma *Google Workspace Developer Preview* 
-   Più informazioni al seguente link: [https://developers.google.com/workspace/preview?hl=it](https://developers.google.com/workspace/preview?hl=it)
+1. Creare un progetto all'interno della Google Cloud Platform, all'interno di esso abilitare le API necessarie quali Google Meet e Google Drive
 
-2. Creare un progetto all'interno della Google Cloud Platform, all'interno di esso abilitare le API necessarie quali Google Meet e Google Drive
-
-3. Creare delle nuove credenziali *ID client OAuth 2.0* di tipologia "Applicazione Web".
+2. Creare delle nuove credenziali *ID client OAuth 2.0* di tipologia "Applicazione Web".
    Durante la configurazioni di tali credenziali, aggiungere alla sezione *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
-4. Scaricare e inserire il file .json delle credenziali appena create all'interno della folder del plugin, rinominandolo **client_secret.json**
+3. Scaricare e inserire il file .json delle credenziali appena create all'interno della folder del plugin, rinominandolo **client_secret.json**
 
-5. Installare tramite *composer* i pacchetti **google/apps-meet**  e **google/apiclient:^2.0** 
+4. Installare tramite *composer* i pacchetti **google/apps-meet**  e **google/apiclient:^2.0** 
    ```
    composer require google/apps-meet
 
    composer require google/apiclient:^2.0
    ```
 
-6. ATTENZIONE: Alla riga 142 del file *GHandler.php* cambiare il dominio di appartenenza dei file nel proprio
+5. ATTENZIONE: Alla riga 142 del file *GHandler.php* cambiare il dominio di appartenenza dei file nel proprio
 
 ## Installing via uploaded ZIP file ##
 
