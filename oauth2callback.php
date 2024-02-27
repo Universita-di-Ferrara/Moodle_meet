@@ -34,13 +34,14 @@ use Google\Auth\Credentials\UserRefreshCredentials;
 global $SESSION;
 
 require_login();
+$settings = (get_config('gmeet'));
 
-$clientsecretjson = json_decode(
-    file_get_contents('client_secret.json'),
-    true
-)['web'];
-$clientid = $clientsecretjson['client_id'];
-$clientsecret = $clientsecretjson['client_secret'];
+
+$domain = $settings->domain;
+$oauth2 = \core\oauth2\api::get_issuer($settings->issuerid);
+
+$clientid = $oauth2->get('clientid');
+$clientsecret = $oauth2->get('clientsecret');
 $redirecturi = (string) new moodle_url('/mod/gmeet/oauth2callback.php');
 $scopes = "https://www.googleapis.com/auth/meetings.space.created";
 

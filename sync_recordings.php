@@ -21,6 +21,7 @@
  * @copyright  2024 YOUR NAME <your@email.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 use mod_gmeet\google\GHandler;
 use Google\Apps\Meet\V2beta\ListConferenceRecordsRequest;
 use Google\Apps\Meet\V2beta\ListRecordingsRequest;
@@ -35,9 +36,11 @@ require('../../config.php');
 require_login();
 if ($_POST) {
 
+    $settings = (get_config('gmeet'));
+    $domain = $settings->domain;
     $meetcode = $_POST['meet_code'];
     $instanceid = $_POST['instance_id'];
-
+    
     // Prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync.
     $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIST);
 
@@ -72,8 +75,7 @@ if ($_POST) {
                 $dataobj->meet_id = $instanceid;
                 $dataobj->name = "Registrazione del $giorno alle $orario";
                 $DB->insert_record('gmeet_recordings', $dataobj);
-                $googlehandler->share_file($record->getDriveDestination()->getFile(), $SESSION->credentials);
-
+                $googlehandler->share_file($record->getDriveDestination()->getFile(), $SESSION->credentials, $domain);
             }
         }
     }
@@ -83,9 +85,6 @@ if ($_POST) {
     $moduleinstance->last_sync = $timestampgoogle->serializeToJsonString();
     $DB->update_record('gmeet', $moduleinstance);
 
-    header('location:'.$SESSION->redirecturl);
+    header('location:' . $SESSION->redirecturl);
     exit();
 }
-
-
-

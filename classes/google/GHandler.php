@@ -132,15 +132,17 @@ class GHandler {
      *  
      * @return void
      */
-    public function share_file($fileid, $credentials) {
+    public function share_file($fileid, $credentials, $domain) {
         $client = new Client(['credentials' => $credentials]);
         $client->setScopes(Drive::DRIVE);
         $service = new Drive($client);
         $domainpermission = new Permission([
             'type' => 'domain',
             'role' => 'reader',
-            'domain' => 'unife.it',
+            'domain' => $domain ,
         ]);
         $service->permissions->create($fileid, $domainpermission);
     }
 }
+
+

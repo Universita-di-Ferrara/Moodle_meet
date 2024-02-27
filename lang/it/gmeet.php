@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'google_meet';
+$string['pluginname'] = 'Moodle Meet';
 $string['modulename'] = 'Google Meet';
 $string['gmeetname'] = 'Nome della stanza di Google Meet';
 $string['modulenameplural'] = 'Google Meets';
