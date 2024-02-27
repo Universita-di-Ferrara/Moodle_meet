@@ -49,7 +49,7 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
-## Screeshot ##
+## Screenshot ##
 ![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/95679085/1da36ec2-68f8-481f-9cff-18480049a8cc)
 
 
