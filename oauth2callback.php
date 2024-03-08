@@ -23,60 +23,36 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-require_once(__DIR__ . '/../../vendor/autoload.php');
-require(__DIR__ . '/../../config.php');
 
-require_once(__DIR__ . '/lib.php');
+ use mod_gmeet\google\handler;
 
-use mod_gmeet\google\GHandler;
-use Google\Auth\OAuth2;
-use Google\Auth\Credentials\UserRefreshCredentials;
-global $SESSION;
-
-require_login();
-$settings = (get_config('gmeet'));
-
-
-$domain = $settings->domain;
-$oauth2 = \core\oauth2\api::get_issuer($settings->issuerid);
-
-$clientid = $oauth2->get('clientid');
-$clientsecret = $oauth2->get('clientsecret');
-$redirecturi = (string) new moodle_url('/mod/gmeet/oauth2callback.php');
-$scopes = "https://www.googleapis.com/auth/meetings.space.created";
-
-$oauth2 = new OAuth2([
-    'clientId' => $clientid,
-    'clientSecret' => $clientsecret,
-    'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
-    // Where to return the user to if they accept your request to access their account.
-    // You must authorize this URI in the Google API Console.
-    'redirectUri' => $redirecturi,
-    'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
-    'scope' => $scopes,
-]);
-$currenturlredirect = $SESSION->currentredirect;
-
-if (!isset($_GET['code'])) {
-
-    $authenticationurl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
-    header("Location: " . $authenticationurl);
-} else {
-
-    // With the code returned by the OAuth flow, we can retrieve the refresh token.
-    $oauth2->setCode($_GET['code']);
-    $authtoken = $oauth2->fetchAuthToken();
-    $refreshtoken = $authtoken['access_token'];
-
-    // The UserRefreshCredentials will use the refresh token to 'refresh' the credentials when
-    // they expire.
-    $SESSION->credentials = new UserRefreshCredentials(
-        $scopes,
-        [
-            'client_id' => $clientid,
-            'client_secret' => $clientsecret,
-            'refresh_token' => $refreshtoken,
-        ]
-    );
-    header('Location: ' . filter_var($currenturlredirect, FILTER_SANITIZE_URL));
-}
+ require_once(__DIR__ . '/../../config.php');
+ require_once(__DIR__ . '/lib.php');
+ 
+ require_login();
+ 
+ // Headers to make it not cacheable.
+ header('Cache-Control: no-cache, must-revalidate');
+ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+ 
+ // Wait as long as it takes for this script to finish.
+ core_php_time_limit::raise();
+ 
+ $client = new handler();
+ 
+ // Post callback.
+ $client->callback();
+ 
+ // If this request is coming from a popup, close window and reload parent window.
+ $js = <<<EOD
+ <html>
+ <head>
+     <script type="text/javascript">
+         window.opener.location.reload();
+         window.close();
+     </script>
+ </head>
+ <body></body>
+ </html>
+ EOD;
+ die($js);

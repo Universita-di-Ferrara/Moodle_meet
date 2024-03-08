@@ -21,20 +21,10 @@
  * @copyright   2024 Università degli Studi di Ferrara - Unife 
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-// Richiama autoloader per le classi installate con composer
-// Errore segnalato da Codechecker
-require_once(__DIR__ . '/../../vendor/autoload.php');
+
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
 
-// Classi Google
-use Google\Apps\Meet\V2beta\Client\SpacesServiceClient;
-use Google\Apps\Meet\V2beta\CreateSpaceRequest;
-use Google\Auth\Credentials\UserRefreshCredentials;
-use Google\Auth\OAuth2;
-
-// Classe plugin
-use mod_gmeet\google\GHandler;
 
 // Course module id.
 $id = optional_param('id', 0, PARAM_INT);
@@ -55,8 +45,6 @@ if ($id) {
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-$googlehandler = new GHandler();
-
 // Renderizzazione della pagina dell'attività
 $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
@@ -65,54 +53,6 @@ $PAGE->set_context($modulecontext);
 
 // Impostazione url nella sessione
 $SESSION->redirecturl = $PAGE->url;
-
-$settings = (get_config('gmeet'));
-
-$domain = $settings->domain;
-$oauth2 = \core\oauth2\api::get_issuer($settings->issuerid);
-
-$clientid = $oauth2->get('clientid');
-$clientsecret = $oauth2->get('clientsecret');
-
-$redirecturi = (string) new moodle_url('/mod/gmeet/oauth2callback.php');
-$currenturl = (string)new moodle_url('/mod/gmeet/view.php', ['id' => $cm->id]);
-$SESSION->currentredirect = $currenturl;
-$scopes = "https://www.googleapis.com/auth/meetings.space.created https://www.googleapis.com/auth/drive";
-
-$oauth2 = new OAuth2([
-    'clientId' => $clientid,
-    'clientSecret' => $clientsecret,
-    'authorizationUri' => 'https://accounts.google.com/o/oauth2/v2/auth',
-    // Where to return the user to if they accept your request to access their account.
-    // You must authorize this URI in the Google API Console.
-    'redirectUri' => $redirecturi,
-    'tokenCredentialUri' => 'https://www.googleapis.com/oauth2/v4/token',
-    'scope' => $scopes,
-]);
-if (!isset($SESSION->credentials)) {
-    $authenticationurl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
-    header("Location: " . $authenticationurl);
-    die();
-}
-
-try {
-    $SESSION->credentials->fetchAuthToken();
-} catch (Exception $e) {
-    $authenticationurl = $oauth2->buildFullAuthorizationUri(['access_type' => 'offline']);
-    header("Location: " . $authenticationurl);
-    die();
-}
-if (!$moduleinstance->google_url) {
-
-
-    $meetinfo = $googlehandler->create_space($SESSION->credentials);
-
-    $moduleinstance->google_url = $meetinfo->meetingUri;
-    $moduleinstance->meeting_code = $meetinfo->meetingCode;
-
-    $DB->update_record('gmeet', $moduleinstance);
-}
-
 
 $meetrecordingsarray = [];
 if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleinstance->id])) {
@@ -127,8 +67,6 @@ if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleins
 
         array_push($meetrecordingsarray['records'], $record);
     }
-
-
 }
 
 $spaceinfo = [

@@ -40,5 +40,5 @@ $string['issuerid'] = 'Impostazioni del gestore di Oauth';
 $string['issuerid_desc'] = '<a href="https://github.com/ronefel/moodle-mod_googlemeet/wiki/How-to-create-Client-ID-and-Client-Secret" target="_blank">Come impostare Oauth Google</a>';
 $string['domain_setting_name'] = 'Dominio di condivisione delle registrazioni';
 $string['domain_setting_des'] = "Inserire il dominio per il quale si vuole condividere le lezioni, solo gli utenti del dominio possono visualizzare le registrazioni senza richiedere il permesso ";
-
+$string['logintoaccount'] = "Clicca qui per autenticarti con Google";
 

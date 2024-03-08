@@ -22,6 +22,9 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+
+use mod_gmeet\google\handler;
+
 /**
  * Return if the plugin supports $feature.
  *
@@ -51,7 +54,14 @@ function gmeet_supports($feature) {
 function gmeet_add_instance($moduleinstance, $mform = null) {
     global $DB;
 
+    $client = new handler();
     $moduleinstance->timecreated = time();
+
+    // Create meeting space
+    $space = $client->create_space_request();
+
+    $moduleinstance->google_url = $space->meetingUri;
+    $moduleinstance->meeting_code = $space->meetingCode;
 
     $id = $DB->insert_record('gmeet', $moduleinstance);
 
