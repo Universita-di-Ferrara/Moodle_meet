@@ -92,7 +92,7 @@ if ($_POST) {
     // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
     $todaytimestamp = make_timestamp(date('Y'),date('m'),date('d'));
     $timestampgoogle = str_replace('+00:00', 'Z', date('c',$todaytimestamp));
-    $moduleinstance->last_sync = $timestampgoogle;
+    $moduleinstance->last_sync = json_encode($timestampgoogle);
     $DB->update_record('gmeet', $moduleinstance);
 
     header('location:' . $SESSION->redirecturl);
