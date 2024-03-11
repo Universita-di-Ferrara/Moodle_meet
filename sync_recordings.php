@@ -43,7 +43,6 @@ if ($_POST) {
     // Default date
     $timestamp = make_timestamp((date('Y')-1));
     $data = str_replace('+00:00', 'Z', date('c',$timestamp));
-    $data = json_encode($data);
     
     // Se il campo last_sync è valorizzato, prendo quello come timestamp.
     if (isset($moduleinstance->last_sync)) {
@@ -60,13 +59,12 @@ if ($_POST) {
             $nexttokenpage = $responseconferencelist->nextPageToken;
         }
         $allconference = array_merge($allconference,$responseconferencelist->conferenceRecords);
+
     }while ($nexttokenpage);
-    error_log(print_r($allconference,true));
     foreach ($allconference as $element) {
         $recordings  = $googlehandler->list_recordings_request($element->name);
         if (!(isset($recordings->recordings))) continue;
         foreach ($recordings->recordings as $record) {
-            error_log(print_r($record,true));
             if (!($record->state == 'FILE_GENERATED')) continue;
             // Controllo che non esista già il record (es più sync al giorno).
             $textcomparefileid = $DB->sql_compare_text('file_id');
@@ -92,7 +90,7 @@ if ($_POST) {
     // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
     $todaytimestamp = make_timestamp(date('Y'),date('m'),date('d'));
     $timestampgoogle = str_replace('+00:00', 'Z', date('c',$todaytimestamp));
-    $moduleinstance->last_sync = json_encode($timestampgoogle);
+    $moduleinstance->last_sync = $timestampgoogle;
     $DB->update_record('gmeet', $moduleinstance);
 
     header('location:' . $SESSION->redirecturl);
