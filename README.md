@@ -11,7 +11,7 @@ Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficial
 
 **Documentazione ufficiale** delle API: https://developers.google.com/meet/api/guides/overview?hl=it 
 
-## Configurazioni iniziali
+## Configurazioni iniziali obbligatorie
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
