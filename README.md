@@ -1,3 +1,5 @@
+![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/9e6921d0-f1ab-4712-848c-9b568f65eb63)
+
 # Moodle_meet #
 
 Modulo di attvità Google meet: creazione di una stanza meet per conferenze.
@@ -18,6 +20,7 @@ Prima di installare il plugin sarà necessario effettuare delle configurazioni i
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
 **Su Moodle**
+
 3. _Amministrazione del sito_ >_ Gestione Autenticazione_ > Abilitare OAuth 2
 
 4. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
