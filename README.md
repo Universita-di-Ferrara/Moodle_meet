@@ -1,3 +1,5 @@
+![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/9e6921d0-f1ab-4712-848c-9b568f65eb63)
+
 # Moodle_meet #
 
 Modulo di attvità Google meet: creazione di una stanza meet per conferenze.
@@ -9,23 +11,22 @@ Oltre al link di accesso al meet, sarà possibile visualizzare tutte le registra
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
+**Su Google Cloud:**
+
 1. Creare un progetto all'interno della Google Cloud Platform, all'interno di esso abilitare le API necessarie quali Google Meet e Google Drive
 
 2. Creare delle nuove credenziali *ID client OAuth 2.0* di tipologia "Applicazione Web".
    Durante la configurazioni di tali credenziali, aggiungere alla sezione *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
-3. Scaricare e inserire il file .json delle credenziali appena create all'interno della folder del plugin, rinominandolo **client_secret.json**
+**Su Moodle**
 
-4. Installare tramite *composer* i pacchetti **google/apps-meet**  e **google/apiclient:^2.0** 
-   ```
-   composer require google/apps-meet
+3. _Amministrazione del sito_ >_ Gestione Autenticazione_ > Abilitare OAuth 2
 
-   composer require google/apiclient:^2.0
-   ```
+4. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
 
-5. ATTENZIONE: Alla riga 142 del file *GHandler.php* cambiare il dominio di appartenenza dei file nel proprio
-
+5. Nella configurazione del Plugin: Specificare il servizio di OAuth2 configurato (Google).
+ 
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
