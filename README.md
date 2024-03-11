@@ -9,9 +9,9 @@ Oltre al link di accesso al meet, sarà possibile visualizzare tutte le registra
 
 Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficialmente nei primi mesi del 2024.
 
-[Documentazione ufficiale delle API di Google](https://developers.google.com/meet/api/guides/overview?hl=it)
+📚 [Documentazione ufficiale delle API di Google](https://developers.google.com/meet/api/guides/overview?hl=it)
 
-## Configurazioni iniziali obbligatorie
+## ⚠️ Configurazioni iniziali obbligatorie
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
