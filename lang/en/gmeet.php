@@ -40,7 +40,10 @@ $string['issuerid'] = 'Oauth issuer';
 $string['issuerid_desc'] = '<a href="https://github.com/ronefel/moodle-mod_googlemeet/wiki/How-to-create-Client-ID-and-Client-Secret" target="_blank">How to set up an OAuth Service</a>';
 $string['domain_setting_name'] = "Google domain which it 's shared recordings with";
 $string['domain_setting_des'] = "Please, set your own google domain to share recordings with user inside it";
-$string['logintoaccount'] = "Google Login";
-$string['logouttoaccount'] = "Google Logout";
-$string['logouttoyourgoogleaccount'] = "Accesso avvenuto con successo, attualmente sei collegato come:";
+$string['logintoaccountbutton'] = "Google Login";
+$string['logouttoaccountbutton'] = "Google Logout";
+$string['logintoyourgoogleaccount'] = 'Log in to your Google account so that the Google Meet can be automatically created';
+$string['loggedinaccount'] = 'Connected Google account';
+$string['servicenotenabled'] = 'This service is not enabled';
+$string['sessionexpired'] = 'This session is expired, please login again';
 
