@@ -20,7 +20,7 @@ namespace mod_gmeet\event;
  * Event course_module_instance_list_viewed
  *
  * @package    mod_gmeet
- * @copyright  2024 Università degli Studi di Ferrara - Unife 
+ * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_module_instance_list_viewed extends \core\event\course_module_instance_list_viewed {

@@ -18,13 +18,12 @@
  * Prints an instance of mod_gmeet.
  *
  * @package     mod_gmeet
- * @copyright   2024 Università degli Studi di Ferrara - Unife 
+ * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
-
 
 // Course module id.
 $id = optional_param('id', 0, PARAM_INT);
@@ -32,7 +31,7 @@ $id = optional_param('id', 0, PARAM_INT);
 // Activity instance id.
 $g = optional_param('g', 0, PARAM_INT);
 
-// Recupera l'istanza dell'attività
+// Recupera l'istanza dell'attività.
 if ($id) {
     $cm = get_coursemodule_from_id('gmeet', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -45,13 +44,13 @@ if ($id) {
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-// Renderizzazione della pagina dell'attività
+// Renderizzazione della pagina dell'attività.
 $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
-// Impostazione url nella sessione
+// Impostazione url nella sessione.
 $SESSION->redirecturl = $PAGE->url;
 
 $meetrecordingsarray = [];
@@ -73,13 +72,8 @@ $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'meeting_url' => $moduleinstance->google_url,
     'meeting_code' => $moduleinstance->meeting_code,
-    'meeting_recordings' =>   $meetrecordingsarray,
+    'meeting_recordings' => $meetrecordingsarray,
 ];
-
-
-
-
-
 
 echo $OUTPUT->header();
 

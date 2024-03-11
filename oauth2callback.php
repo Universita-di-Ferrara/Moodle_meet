@@ -28,21 +28,21 @@
 
  require_once(__DIR__ . '/../../config.php');
  require_once(__DIR__ . '/lib.php');
- 
+
  require_login();
- 
+
  // Headers to make it not cacheable.
  header('Cache-Control: no-cache, must-revalidate');
  header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
- 
+
  // Wait as long as it takes for this script to finish.
  core_php_time_limit::raise();
- 
+
  $client = new handler();
- 
+
  // Post callback.
  $client->callback();
- 
+
  // If this request is coming from a popup, close window and reload parent window.
  $js = <<<EOD
  <html>

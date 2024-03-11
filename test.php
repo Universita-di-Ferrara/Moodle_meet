@@ -21,9 +21,6 @@
  * @copyright  2024 YOUR NAME <your@email.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-use core\oauth2\service\google;
-
 require('../../config.php');
 require_login();
 

@@ -49,7 +49,7 @@ class rest extends \core\oauth2\rest {
                 'args' => [
                     'filter' => PARAM_TEXT,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
             'listrecordings' => [
                 'endpoint' => 'https://meet.googleapis.com/v2/{parent}/recordings',
@@ -65,10 +65,8 @@ class rest extends \core\oauth2\rest {
                 'args' => [
                     'fileid' => PARAM_TEXT,
                 ],
-                'response' => 'json'
+                'response' => 'json',
             ],
         ];
     }
-
-    
 }

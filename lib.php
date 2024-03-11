@@ -18,7 +18,7 @@
  * Library of interface functions and constants.
  *
  * @package     mod_gmeet
- * @copyright   2024 Università degli Studi di Ferrara - Unife 
+ * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -57,7 +57,7 @@ function gmeet_add_instance($moduleinstance, $mform = null) {
     $client = new handler();
     $moduleinstance->timecreated = time();
 
-    // Create meeting space
+    // Create meeting space.
     $space = $client->create_space_request();
 
     $moduleinstance->google_url = $space->meetingUri;

@@ -31,15 +31,26 @@ use mod_gmeet\rest;
  * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class handler
-{
+class handler {
 
+    /**
+     * Conference setting, Access_Type
+     * @var int
+     */
     const ACCESS_TYPE_TRUSTED = 2;
 
+    /**
+     * Conference setting, Entry_Point
+     * @var int
+     */
     const ENTRY_POINT_ACCESS_ALL = 1;
 
+    /**
+     * Google scopes
+     * @var string
+     */
     const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/meetings.space.created';
-    
+
     /**
      * OAuth 2 client
      * @var \core\oauth2\client
@@ -61,15 +72,12 @@ class handler
 
     /**
      * Constructor.
-     * 
+     *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
 
-        /**
-         * check if issuer setting is set in plugin manager.
-         */
+        // Check if issuer setting is set in plugin manager.
         try {
             $this->issuer = api::get_issuer(get_config('gmeet', 'issuerid'));
         } catch (dml_missing_record_exception $e) {
@@ -77,9 +85,8 @@ class handler
             // Maybe i cant throw the catched exception ?
         }
 
-        /**
-         * check if issuer id disabled or is not Google.
-         */
+        // Check if issuer id disabled or is not Google.
+
         if ($this->issuer && (!$this->issuer->get('enabled') || !$this->issuer->get('servicetype') == 'google')) {
             $this->enabled = false;
         }
@@ -91,11 +98,10 @@ class handler
 
     /**
      * Get oauth2 client
-     * 
+     *
      * @return \core\oauth2\client
      */
-    protected function get_oauth_client()
-    {
+    protected function get_oauth_client() {
         if ($this->client) {
             return $this->client;
         }
@@ -115,8 +121,7 @@ class handler
      *
      * @return string HTML code
      */
-    public function print_login_popup($attr = null)
-    {
+    public function print_login_popup ($attr = null) {
         global $OUTPUT;
 
         $client = $this->get_oauth_client();
@@ -138,14 +143,14 @@ class handler
      *
      * @return string HTML code
      */
-    public function print_logout_popup($attr = null)
-    {
+    public function print_logout_popup ($attr = null) {
         global $PAGE;
         $logouturl = new moodle_url($PAGE->url);
         $logouturl->param('logout', true);
 
         return html_writer::div('
-            <button type="button" class="btn btn-primary" onClick="javascript:window.location.replace(\'' . $logouturl . '\')">' . get_string('logouttoaccountbutton', 'gmeet') . '</a>', 'mt-2');
+            <button type="button" class="btn btn-primary" onClick="javascript:window.location.replace(\'' . $logouturl . '\')">' .
+            get_string('logouttoaccountbutton', 'gmeet') . '</a>', 'mt-2');
     }
 
     /**
@@ -155,23 +160,18 @@ class handler
      *
      * @return string HTML code
      */
-    public function print_user_info($scope = null)
-    {
-        global $OUTPUT, $PAGE;
+    public function print_user_info ($scope = null) {
+        global $PAGE;
 
         if (!$this->check_login()) {
             return '';
         }
-
         $userauth = $this->get_oauth_client();
         $userinfo = $userauth->get_userinfo();
         $username = $userinfo['username'];
         $name = $userinfo['firstname'] . ' ' . $userinfo['lastname'];
-
-
         $logouturl = new moodle_url($PAGE->url);
         $logouturl->param('logout', true);
-
 
         $out = html_writer::start_div('', ['id' => 'googlemeet_user-name', 'style' => 'display:flex; flex-direction:column']);
         $out .= html_writer::span(get_string('loggedinaccount', 'gmeet'), '');
@@ -188,8 +188,7 @@ class handler
      *
      * @return bool true when logged in.
      */
-    public function check_login()
-    {
+    public function check_login() {
         $client = $this->get_oauth_client();
         return $client->is_logged_in();
     }
@@ -199,8 +198,7 @@ class handler
      *
      * @return void
      */
-    public function callback()
-    {
+    public function callback() {
         $client = $this->get_oauth_client();
         // This will upgrade to an access token if we have an authorization code and save the access token in the session.
         $client->is_logged_in();
@@ -211,12 +209,10 @@ class handler
      *
      * @return void
      */
-    public function logout()
-    {
+    public function logout() {
         global $PAGE;
 
         if ($this->check_login()) {
-            error_log('test');
             $url = new moodle_url($PAGE->url);
             $client = $this->get_oauth_client();
             $client->log_out();
@@ -245,8 +241,7 @@ class handler
      * @return \stdClass The response object
      * @throws moodle_exception
      */
-    public static function request($service, $api, $params, $rawpost = false): ?\stdClass
-    {
+    public static function request($service, $api, $params, $rawpost = false): ?\stdClass {
         try {
             $response = $service->call($api, $params, $rawpost);
         } catch (\Exception $e) {
@@ -263,11 +258,10 @@ class handler
 
     /**
      * Create a new meeting space
-     * 
+     *
      * @return stdClass space
      */
-    public function create_space_request()
-    {
+    public function create_space_request() {
 
         $service = new rest($this->get_oauth_client());
         $args = [];
@@ -283,21 +277,20 @@ class handler
 
     /**
      * List all conference filtered by $meetingcode and start_time >= $timestamp
-     * 
+     *
      * @param string $meetingcode meeting_code
      * @param string $timestamp timestamp of day from which start filtering
      * @param string $pagetoken nextPageToken if it's not display all results
-     *  
+     *
      * @return stdClass $conferenceresponse all conferences filtered
      */
-    public function list_conference_request($meetingcode, $timestamp, $pagetoken = false)
-    {
+    public function list_conference_request($meetingcode, $timestamp, $pagetoken = false) {
 
         $service = new rest($this->get_oauth_client());
         $argsraw = false;
         $jsonencodedtimestamp = json_encode($timestamp);
         $args = [
-            'filter' => "space.meeting_code = $meetingcode start_time >= $jsonencodedtimestamp"
+            'filter' => "space.meeting_code = $meetingcode start_time >= $jsonencodedtimestamp",
         ];
         if ($pagetoken) {
             $argsraw = [
@@ -308,18 +301,17 @@ class handler
         return $conferenceresponse;
     }
     /**
-     * List all recordings filtered by $conferencename 
-     * 
+     * List all recordings filtered by $conferencename
+     *
      * @param string $parent parent conference name
-     *  
+     *
      * @return stdClass $recordingsresponse all recordings filtered
      */
-    public function list_recordings_request($parent)
-    {
+    public function list_recordings_request($parent) {
 
         $service = new rest($this->get_oauth_client());
         $args = [
-            'parent' => $parent
+            'parent' => $parent,
         ];
 
         $recordingsresponse = $this->request($service, 'listrecordings', $args, false);
@@ -327,14 +319,13 @@ class handler
     }
     /**
      * Share file with domain
-     * 
+     *
      * @param string $fileid file id to share with domain
-     * @param Google\Auth\Credentials\UserRefreshCredentials $credentials user credentials
-     *  
+     * @param string $domain ou domain
+     *
      * @return void
      */
-    public function sharefile_request($fileid, $domain)
-    {
+    public function sharefile_request($fileid, $domain) {
 
         $service = new rest($this->get_oauth_client());
         $args = [

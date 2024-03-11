@@ -42,8 +42,8 @@ if ($ADMIN->fulltree) {
 
     $settings->add(new admin_setting_configtext(
         'gmeet/domain',
-        get_string('domain_setting_name','gmeet'),
-        get_string('domain_setting_des','gmeet'),
+        get_string('domain_setting_name', 'gmeet'),
+        get_string('domain_setting_des', 'gmeet'),
         '',
     ));
 }

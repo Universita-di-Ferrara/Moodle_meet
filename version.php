@@ -18,7 +18,7 @@
  * Plugin version and other meta-data are defined here.
  *
  * @package     mod_gmeet
- * @copyright   2024 Università degli Studi di Ferrara - Unife 
+ * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

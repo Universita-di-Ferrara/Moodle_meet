@@ -18,7 +18,7 @@
  * TODO describe file renderer
  *
  * @package    mod_gmeet
- * @copyright  2024 Università degli Studi di Ferrara - Unife 
+ * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

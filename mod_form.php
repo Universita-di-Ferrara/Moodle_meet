@@ -18,7 +18,7 @@
  * The main mod_gmeet configuration form.
  *
  * @package     mod_gmeet
- * @copyright   2024 Università degli Studi di Ferrara - Unife 
+ * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/course/moodleform_mod.php');
  * Module instance settings form.
  *
  * @package     mod_gmeet
- * @copyright   2024 Università degli Studi di Ferrara - Unife 
+ * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class mod_gmeet_mod_form extends moodleform_mod {
@@ -72,7 +72,6 @@ class mod_gmeet_mod_form extends moodleform_mod {
 
             // If is logged in, shows Google account information.
             if ($client->check_login()) {
-                
                 $mform->addElement('html', html_writer::div($client->print_user_info(), 'mdl-align alert alert-success'));
                 $mform->addElement('hidden', 'client_islogged', true);
             }

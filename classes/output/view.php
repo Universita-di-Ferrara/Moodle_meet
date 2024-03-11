@@ -18,7 +18,7 @@
  * TODO describe file main_page
  *
  * @package    mod_gmeet
- * @copyright  2024 Università degli Studi di Ferrara - Unife 
+ * @copyright  2024 Università degli Studi di Ferrara - Unife
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -41,8 +41,8 @@ class view implements renderable, templatable {
     private $meetinfo = null;
 
     /**
-     * Construct 
-     * 
+     * Construct
+     *
      * @param array $meetresponse all data about meet gmeet and gmeet_recordings table for rendering in template
      */
     public function __construct($meetresponse) {
@@ -53,7 +53,7 @@ class view implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output
-     * 
+     *
      * @return stdClass $meet
      */
     public function export_for_template(renderer_base $output): stdClass {
