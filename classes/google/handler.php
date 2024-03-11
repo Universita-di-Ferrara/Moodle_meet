@@ -38,6 +38,8 @@ class handler
 
     const ENTRY_POINT_ACCESS_ALL = 1;
 
+    const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/meetings.space.created';
+    
     /**
      * OAuth 2 client
      * @var \core\oauth2\client
@@ -56,7 +58,6 @@ class handler
      */
     public $enabled = true;
 
-    const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/meetings.space.created';
 
     /**
      * Constructor.
@@ -126,7 +127,7 @@ class handler
         return html_writer::div('
             <button class="btn btn-primary" onClick="javascript:window.open(\'' . $client->get_login_url() . '\',
                 \'Login\',\'height=600,width=599,top=0,left=0,menubar=0,location=0,directories=0,fullscreen=0\'
-            ); return false">' . get_string('logintoaccount', 'gmeet') . '</button>', 'mt-2');
+            ); return false">' . get_string('logintoaccountbutton', 'gmeet') . '</button>', 'mt-2');
     }
 
 
@@ -144,7 +145,7 @@ class handler
         $logouturl->param('logout', true);
 
         return html_writer::div('
-            <button type="button" class="btn btn-primary" onClick="javascript:window.location.replace(\'' . $logouturl . '\')">' . get_string('logouttoaccount', 'gmeet') . '</a>', 'mt-2');
+            <button type="button" class="btn btn-primary" onClick="javascript:window.location.replace(\'' . $logouturl . '\')">' . get_string('logouttoaccountbutton', 'gmeet') . '</a>', 'mt-2');
     }
 
     /**
@@ -171,8 +172,9 @@ class handler
         $logouturl = new moodle_url($PAGE->url);
         $logouturl->param('logout', true);
 
-        $out = html_writer::start_div('', ['id' => 'googlemeet_user-name']);
-        $out .= html_writer::span(get_string('loggedinaccount', 'googlemeet'), '');
+
+        $out = html_writer::start_div('', ['id' => 'googlemeet_user-name', 'style' => 'display:flex; flex-direction:column']);
+        $out .= html_writer::span(get_string('loggedinaccount', 'gmeet'), '');
         $out .= html_writer::span($name);
         $out .= html_writer::span($username);
         $out .= $this->print_logout_popup();
@@ -251,7 +253,7 @@ class handler
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 // This is raised when the Drive API service or the Calendar API service
                 // has not been enabled on Google APIs control panel.
-                throw new moodle_exception('servicenotenabled', 'mod_googlemeet');
+                throw new moodle_exception('servicenotenabled', 'mod_gmeet');
             }
             throw $e;
         }
@@ -293,10 +295,10 @@ class handler
 
         $service = new rest($this->get_oauth_client());
         $argsraw = false;
+        $jsonencodedtimestamp = json_encode($timestamp);
         $args = [
-            'filter' => "space.meeting_code = $meetingcode start_time >= $timestamp"
+            'filter' => "space.meeting_code = $meetingcode start_time >= $jsonencodedtimestamp"
         ];
-        error_log(print_r($args,true));
         if ($pagetoken) {
             $argsraw = [
                 'pageToken' => $argsraw,
