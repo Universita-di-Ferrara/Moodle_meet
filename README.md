@@ -9,12 +9,21 @@ Oltre al link di accesso al meet, sarà possibile visualizzare tutte le registra
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
+**Su Google Cloud:**
+
 1. Creare un progetto all'interno della Google Cloud Platform, all'interno di esso abilitare le API necessarie quali Google Meet e Google Drive
 
 2. Creare delle nuove credenziali *ID client OAuth 2.0* di tipologia "Applicazione Web".
    Durante la configurazioni di tali credenziali, aggiungere alla sezione *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
+**Su Moodle**
+3. _Amministrazione del sito_ >_ Gestione Autenticazione_ > Abilitare OAuth 2
+
+4. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
+
+5. Nella configurazione del Plugin: Specificare il servizio di OAuth2 configurato (Google).
+ 
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
