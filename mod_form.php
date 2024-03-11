@@ -58,14 +58,14 @@ class mod_gmeet_mod_form extends moodleform_mod {
             // Was logged in before submitting the form and the google session expired after submitting the form.
             if ($clientislogged && !$client->check_login()) {
 
-                $mform->addElement('html', html_writer::div(get_string('sessionexpired', 'googlemeet') .
+                $mform->addElement('html', html_writer::div(get_string('sessionexpired', 'gmeet') .
                     $client->print_login_popup(), 'mdl-align alert alert-danger googlemeet_loginbutton'
                 ));
 
                 // Whether the customer is enabled and if not logged in to the Google account.
             } else if ($client->enabled && !$client->check_login()) {
 
-                $mform->addElement('html', html_writer::div(get_string('logintoyourgoogleaccount', 'googlemeet') .
+                $mform->addElement('html', html_writer::div(get_string('logintoyourgoogleaccount', 'gmeet') .
                     $client->print_login_popup(), 'mdl-align alert alert-info googlemeet_loginbutton'
                 ));
             }
