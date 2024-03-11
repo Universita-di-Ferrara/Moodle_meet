@@ -58,7 +58,9 @@ if ($_POST) {
         if (isset($responseconferencelist->nextPageToken)) {
             $nexttokenpage = $responseconferencelist->nextPageToken;
         }
-        $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
+        if (isset($responseconferencelist->conferenceRecords)) {
+            $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
+        }
 
     } while ($nexttokenpage);
     foreach ($allconference as $element) {
