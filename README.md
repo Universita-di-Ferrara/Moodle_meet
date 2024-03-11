@@ -1,6 +1,6 @@
-![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/9e6921d0-f1ab-4712-848c-9b568f65eb63)
-
 # Moodle_meet #
+
+![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/9e6921d0-f1ab-4712-848c-9b568f65eb63)
 
 Modulo di attvità Google meet: creazione di una stanza meet per conferenze.
 
@@ -9,27 +9,30 @@ Oltre al link di accesso al meet, sarà possibile visualizzare tutte le registra
 
 Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficialmente nei primi mesi del 2024.
 
-**Documentazione ufficiale** delle API: https://developers.google.com/meet/api/guides/overview?hl=it 
+[Documentazione ufficiale delle API di Google](https://developers.google.com/meet/api/guides/overview?hl=it)
 
 ## Configurazioni iniziali obbligatorie
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
-**Su Google Cloud:**
+### Su Google Cloud: ### 
 
-1. Creare un progetto all'interno della Google Cloud Platform, all'interno di esso abilitare le API necessarie quali Google Meet e Google Drive
+1. **Creare un progetto** all'interno della [Google Cloud Platform](https://console.cloud.google.com/),
 
-2. Creare delle nuove credenziali *ID client OAuth 2.0* di tipologia "Applicazione Web".
-   Durante la configurazioni di tali credenziali, aggiungere alla sezione *URI di reindirizzamento autorizzati* il seguente URI: 
+2. Dal Menù API e Servizi **abilitare le API** necessarie: _Google Meet_ e _Google Drive_ .
+
+3. **Creare delle nuove credenziali** *ID client OAuth 2.0* di tipologia "Applicazione Web".
+   
+5. Durante la configurazioni di tali credenziali, **aggiungere alla sezione** *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
-**Su Moodle**
+### Su Moodle ### 
 
-3. _Amministrazione del sito_ > _ Gestione Autenticazione_ > Abilitare OAuth 2
+1. _Amministrazione del sito_ > _ Gestione Autenticazione_ > Abilitare OAuth 2
 
-4. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
+2. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
 
-5. Nella configurazione del Plugin: Specificare il servizio di OAuth2 configurato (Google).
+3. Nella configurazione del Plugin: Specificare il servizio di OAuth2 configurato (Google).
  
 ## Installing via uploaded ZIP file ##
 
@@ -59,7 +62,7 @@ to complete the installation from the command line.
 
 ## License ##
 
-2023 Università degli Studi di Ferrara - Unife
+2024 Università degli Studi di Ferrara - Unife
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software
