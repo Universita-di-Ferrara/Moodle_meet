@@ -15,17 +15,6 @@ Prima di installare il plugin sarà necessario effettuare delle configurazioni i
    Durante la configurazioni di tali credenziali, aggiungere alla sezione *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
 
-3. Scaricare e inserire il file .json delle credenziali appena create all'interno della folder del plugin, rinominandolo **client_secret.json**
-
-4. Installare tramite *composer* i pacchetti **google/apps-meet**  e **google/apiclient:^2.0** 
-   ```
-   composer require google/apps-meet
-
-   composer require google/apiclient:^2.0
-   ```
-
-5. ATTENZIONE: Alla riga 142 del file *GHandler.php* cambiare il dominio di appartenenza dei file nel proprio
-
 ## Installing via uploaded ZIP file ##
 
 1. Log in to your Moodle site as an admin and go to _Site administration >
