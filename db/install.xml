@@ -14,7 +14,7 @@
         <FIELD NAME="intro" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Activity description."/>
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The format of the intro field."/>
         <FIELD NAME="google_url" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Url della stanza Google meet"/>
-        <FIELD NAME="meeting_code" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Codice della stanza Google meet"/>
+        <FIELD NAME="space_name" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Codice della stanza Google meet"/>
         <FIELD NAME="last_sync" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
