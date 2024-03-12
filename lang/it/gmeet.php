@@ -43,5 +43,5 @@ $string['domain_setting_des'] = "Inserire il dominio per il quale si vuole condi
 $string['logintoaccountbutton'] = "Google Login";
 $string['loggedinaccount'] = 'Account Google attualmente connesso';
 $string['sessionexpired'] = 'La sessione è scaduta, si prega di autenticarsi nuovamente';
-$string['logintoyourgoogleaccount'] = 'Clicca il bottone sottostante per autenticarti con Google, è necessario per la creazione del Google Meet';
+$string['logintoyourgoogleaccount'] = 'Clicca il bottone sottostante per autenticarti con Google';
 

@@ -31,19 +31,16 @@ $capabilities = [
     // The standard capability mod/offlinequiz:addinstance.
     'mod/gmeet:addinstance' => [
         'riskbitmask' => RISK_XSS,
-
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
                 'editingteacher' => CAP_ALLOW,
-                'manager' => CAP_ALLOW,
         ],
         ],
 
     // Ability to see that the offline quiz exists, and the basic information
     // about it, for example the start date and time limit.
     'mod/gmeet:view' => [
-
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
         'legacy' => [

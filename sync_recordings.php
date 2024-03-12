@@ -24,9 +24,7 @@
 
 use mod_gmeet\google\handler;
 
-
 require('../../config.php');
-
 
 require_login();
 
