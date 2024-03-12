@@ -32,7 +32,7 @@ if ($_POST) {
 
     $settings = (get_config('gmeet'));
     $domain = $settings->domain;
-    $meetcode = $_POST['meet_code'];
+    $spacename = $_POST['space_name'];
     $instanceid = $_POST['instance_id'];
 
     // Prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync.
@@ -52,7 +52,7 @@ if ($_POST) {
     $nexttokenpage  = false;
     $allconference = [];
     do {
-        $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->meeting_code, $data, $nexttokenpage);
+        $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->space_name, $data, $nexttokenpage);
         if (isset($responseconferencelist->nextPageToken)) {
             $nexttokenpage = $responseconferencelist->nextPageToken;
         }

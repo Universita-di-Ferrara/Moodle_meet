@@ -278,19 +278,19 @@ class handler {
     /**
      * List all conference filtered by $meetingcode and start_time >= $timestamp
      *
-     * @param string $meetingcode meeting_code
+     * @param string $spacename meeting_code
      * @param string $timestamp timestamp of day from which start filtering
      * @param string $pagetoken nextPageToken if it's not display all results
      *
      * @return stdClass $conferenceresponse all conferences filtered
      */
-    public function list_conference_request($meetingcode, $timestamp, $pagetoken = false) {
+    public function list_conference_request($spacename, $timestamp, $pagetoken = false) {
 
         $service = new rest($this->get_oauth_client());
         $argsraw = false;
         $jsonencodedtimestamp = json_encode($timestamp);
         $args = [
-            'filter' => "space.meeting_code = $meetingcode start_time >= $jsonencodedtimestamp",
+            'filter' => "space.name = $spacename start_time >= $jsonencodedtimestamp",
         ];
         if ($pagetoken) {
             $argsraw = [
@@ -358,6 +358,7 @@ class handler {
             $response = $this->request($service, 'get_space', $args, false);
             return true;
         } catch (\Throwable $th) {
+            error_log($th->getMessage());
             return false;
         }
     }

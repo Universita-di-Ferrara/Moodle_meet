@@ -35,73 +35,7 @@ function xmldb_gmeet_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
 
-    if ($oldversion < 2024012902) {
 
-        // Define field google_url to be added to gmeet.
-        $table = new xmldb_table('gmeet');
-        $field = new xmldb_field('meeting_code', XMLDB_TYPE_TEXT, null, null, null, null, null, 'introformat');
-
-        // Conditionally launch add field google_url.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Gmeet savepoint reached.
-        upgrade_mod_savepoint(true, 2024012902, 'gmeet');
-    }
-
-    if ($oldversion < 2024020101) {
-
-        // Define table gmeet_recordings to be created.
-        $table = new xmldb_table('gmeet_recordings');
-
-        // Adding fields to table gmeet_recordings.
-        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('file_id', XMLDB_TYPE_TEXT, null, null, null, null, null);
-        $table->add_field('meet_id', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
-
-        // Adding keys to table gmeet_recordings.
-        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
-        $table->add_key('fk_meet_id', XMLDB_KEY_FOREIGN, ['meet_id'], 'gmeet', ['id']);
-
-        // Conditionally launch create table for gmeet_recordings.
-        if (!$dbman->table_exists($table)) {
-            $dbman->create_table($table);
-        }
-
-        // Gmeet savepoint reached.
-        upgrade_mod_savepoint(true, 2024020101, 'gmeet');
-    }
-
-    if ($oldversion < 2024020201) {
-
-        // Define field last_sync to be added to gmeet.
-        $table = new xmldb_table('gmeet');
-        $field = new xmldb_field('last_sync', XMLDB_TYPE_TEXT, null, null, null, null, null, 'meeting_code');
-
-        // Conditionally launch add field last_sync.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Gmeet savepoint reached.
-        upgrade_mod_savepoint(true, 2024020201, 'gmeet');
-    }
-
-    if ($oldversion < 2024020801) {
-
-        // Define field name to be added to gmeet_recordings.
-        $table = new xmldb_table('gmeet_recordings');
-        $field = new xmldb_field('name', XMLDB_TYPE_TEXT, null, null, null, null, null, 'meet_id');
-
-        // Conditionally launch add field name.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Gmeet savepoint reached.
-        upgrade_mod_savepoint(true, 2024020801, 'gmeet');
-    }
 
     return true;
 }

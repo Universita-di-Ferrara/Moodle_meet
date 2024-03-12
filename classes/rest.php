@@ -69,8 +69,8 @@ class rest extends \core\oauth2\rest {
             ],
 
             'get_space' => [
-                'endpoint' => 'https://meet.googleapis.com/v2/spaces/{name}',
-                'method' => 'get',
+                'endpoint' => 'https://meet.googleapis.com/v2/{name}',
+                'method' => 'patch',
                 'args' => [
                     'name' => PARAM_TEXT,
                 ],

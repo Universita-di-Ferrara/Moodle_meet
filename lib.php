@@ -61,7 +61,7 @@ function gmeet_add_instance($moduleinstance, $mform = null) {
     $space = $client->create_space_request();
 
     $moduleinstance->google_url = $space->meetingUri;
-    $moduleinstance->meeting_code = $space->meetingCode;
+    $moduleinstance->space_name = $space->name;
 
     $id = $DB->insert_record('gmeet', $moduleinstance);
 

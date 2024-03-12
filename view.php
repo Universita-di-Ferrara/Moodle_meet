@@ -79,13 +79,13 @@ $ownership = false;
 $loggedin = $client->check_login();
 
 if (has_capability('mod/gmeet:addinstance', $modulecontext) && $loggedin) {
-    $ownership = $client->getspace_request($moduleinstance->meeting_code);
+    $ownership = $client->getspace_request($moduleinstance->space_name);
 }
 
 $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'meeting_url' => $moduleinstance->google_url,
-    'meeting_code' => $moduleinstance->meeting_code,
+    'space_name' => $moduleinstance->space_name,
     'meeting_recordings' => $meetrecordingsarray,
     'isowner' => $ownership,
 ];
@@ -112,5 +112,6 @@ $renderable = new mod_gmeet\output\view($spaceinfo);
 
 echo $output->render($renderable);
 
+echo(var_dump($ownership));
 
 echo $OUTPUT->footer();
