@@ -340,4 +340,25 @@ class handler {
         $response = $this->request($service, 'create_permission', $args, json_encode($argsraw));
         return $response;
     }
+
+    /**
+     * Check if the user is the owner of the space
+     *
+     * @param string $name space code
+     *
+     * @return bool if the user is the meet owner
+     */
+    public function getspace_request($name) {
+
+        $service = new rest($this->get_oauth_client());
+        $args = [
+            'name' => $name,
+        ];
+        try {
+            $response = $this->request($service, 'get_space', $args, false);
+            return true;
+        } catch (\Throwable $th) {
+            return false;
+        }
+    }
 }

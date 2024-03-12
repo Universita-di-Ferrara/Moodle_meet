@@ -21,6 +21,7 @@
  * @copyright   2024 Università degli Studi di Ferrara - Unife
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+use mod_gmeet\google\handler;
 
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
@@ -30,6 +31,10 @@ $id = optional_param('id', 0, PARAM_INT);
 
 // Activity instance id.
 $g = optional_param('g', 0, PARAM_INT);
+
+$logout = optional_param('logout', 0, PARAM_BOOL);
+
+$client = new handler();
 
 // Recupera l'istanza dell'attività.
 if ($id) {
@@ -50,6 +55,9 @@ $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
 
+if ($logout) {
+    $client->logout();
+}
 // Impostazione url nella sessione.
 $SESSION->redirecturl = $PAGE->url;
 
@@ -67,17 +75,39 @@ if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleins
         array_push($meetrecordingsarray['records'], $record);
     }
 }
+$ownership = false;
+$loggedin = $client->check_login();
+
+if (has_capability('mod/gmeet:addinstance', $modulecontext) && $loggedin) {
+    $ownership = $client->getspace_request($moduleinstance->meeting_code);
+}
 
 $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'meeting_url' => $moduleinstance->google_url,
     'meeting_code' => $moduleinstance->meeting_code,
     'meeting_recordings' => $meetrecordingsarray,
+    'isowner' => $ownership,
 ];
 
 echo $OUTPUT->header();
 
 $output = $PAGE->get_renderer('mod_gmeet');
+
+if (has_capability('mod/gmeet:addinstance', $modulecontext)) {
+
+    if ($client->enabled && !$client->check_login()) {
+
+        echo(html_writer::div(get_string('logintoyourgoogleaccount', 'gmeet') .
+        $client->print_login_popup(), 'mdl-align alert alert-info googlemeet_loginbutton'));
+    }
+
+    // If is logged in, shows Google account information.
+    if ($client->check_login()) {
+        echo(html_writer::div($client->print_user_info(), 'mdl-align alert alert-success'));
+    }
+}
+
 $renderable = new mod_gmeet\output\view($spaceinfo);
 
 echo $output->render($renderable);
