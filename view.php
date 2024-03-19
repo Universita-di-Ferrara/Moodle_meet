@@ -22,9 +22,11 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 use mod_gmeet\google\handler;
+use mod_gmeet\recordings_table;
 
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
+require_once ("$CFG->libdir/tablelib.php");
 
 // Course module id.
 $id = optional_param('id', 0, PARAM_INT);
@@ -54,27 +56,13 @@ $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
 $PAGE->set_context($modulecontext);
+$PAGE->requires->js_call_amd('mod_gmeet/main', 'init');
 
 if ($logout) {
     $client->logout();
 }
 // Impostazione url nella sessione.
 $SESSION->redirecturl = $PAGE->url;
-
-$meetrecordingsarray = [];
-if ($datarecords = $DB->get_records('gmeet_recordings', ['meet_id' => $moduleinstance->id])) {
-    $meetrecordingsarray = ['records' => []];
-
-    foreach ($datarecords as $record) {
-        $record = [
-            "recordingsfileurl" => "https://drive.google.com/file/d/{$record->file_id}/view?usp=drive_web",
-            "namerecording" => $record->name,
-
-        ];
-
-        array_push($meetrecordingsarray['records'], $record);
-    }
-}
 $ownership = false;
 $loggedin = $client->check_login();
 
@@ -86,7 +74,6 @@ $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'meeting_url' => $moduleinstance->google_url,
     'space_name' => $moduleinstance->space_name,
-    'meeting_recordings' => $meetrecordingsarray,
     'isowner' => $ownership,
 ];
 
@@ -112,6 +99,15 @@ $renderable = new mod_gmeet\output\view($spaceinfo);
 
 echo $output->render($renderable);
 
-echo(var_dump($ownership));
+$table = new recordings_table('uniqueid');
+
+// Work out the sql for the table.
+$table->set_sql('id, name, description, date,file_id', "{gmeet_recordings}","meet_id = $moduleinstance->id");
+$table->define_baseurl($PAGE->url);
+
+
+echo(html_writer::start_div('mt-5'));
+$table->out(10, true);
+echo(html_writer::end_div());
 
 echo $OUTPUT->footer();
