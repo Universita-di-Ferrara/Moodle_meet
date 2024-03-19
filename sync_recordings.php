@@ -78,14 +78,16 @@ if ($_POST) {
             if (!($fileexist)) {
                 // Giornata e orario della registrazione.
                 $datetime = new Datetime($record->startTime);
-
-                $giorno = $datetime->format("d-m-Y");
-                $orario = $datetime->format("G:i");
+                $datetimerome = $datetime->setTimezone(new DateTimeZone('Europe/Rome'));
+                $giorno = $datetimerome->format("d-m-Y");
+                $orario = $datetimerome->format("G:i");
+                $datetimesql = $datetimerome->format('Y-m-d H:i:s');
                 // Devo andare a salvare i valori in db dei recordings.
                 $dataobj = new stdClass();
                 $dataobj->file_id = $record->driveDestination->file;
                 $dataobj->meet_id = $instanceid;
                 $dataobj->name = "Registrazione del $giorno alle $orario";
+                $dataobj->date = $datetimesql;
                 $DB->insert_record('gmeet_recordings', $dataobj);
                 $googlehandler->sharefile_request($record->driveDestination->file, $domain);
             }
