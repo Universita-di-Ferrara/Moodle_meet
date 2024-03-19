@@ -44,4 +44,15 @@ $string['logintoaccountbutton'] = "Google Login";
 $string['loggedinaccount'] = 'Account Google attualmente connesso';
 $string['sessionexpired'] = 'La sessione è scaduta, si prega di autenticarsi nuovamente';
 $string['logintoyourgoogleaccount'] = 'Clicca il bottone sottostante per autenticarti con Google';
-
+$string['recording_link_button'] = 'Guarda la registrazione';
+$string['synctoast'] = "Sto recuperando le ultime registrazione...";
+$string['edittoast'] = "Salvataggio delle modifiche in corso...";
+$string['join_meet_button'] = "Entra nel Meet";
+$string['sync_recording_button'] = "Recupera le ultime registrazioni";
+$string['join_meet_info'] = "Clicca il pulsante sottostante per partecipare alla stanza virtuale";
+$string['recording_table_header'] = "Nome della registrazione";
+$string['desc_table_header'] = "Descrizione della registrazione";
+$string['date_table_header'] = "Data della registrazione";
+$string['link_table_header'] = "Registrazione";
+$string['action_table_header'] = "Azioni";
+$string['editingfield'] = 'Form di modifica della registrazione';

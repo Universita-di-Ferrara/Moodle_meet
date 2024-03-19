@@ -27,42 +27,19 @@ Example context (json):
 
 
 
-<p>Cliccare sul pulsante per entrare nella stanza di Google meet
+<p>{{#str}}join_meet_info, mod_gmeet {{/str}}
 <p>
-
     <a name="" id="" class="btn btn-primary" href={{meetingUrl}} role="button" target="_blank"
-        rel="noreferrer noopener">Entra nella stanza</a>
+        rel="noreferrer noopener">{{#str}}join_meet_button, mod_gmeet {{/str}}</a>
 
 {{#isowner}}
 
-<form class="d-flex" action="sync_recordings.php" method="post">
+<form class="d-flex" id="syncForm" action="sync_recordings.php" method="post" >
     <input type="hidden" name="space_name" value="{{spaceName}}">
     <input type="hidden" name="instance_id" value="{{instanceId}}">
-    <button type="submit" name="" id="" class="btn btn-primary" data-action="mod_gmeet/sync_recordings"
-        role="button">Sincronizza ultime registrazioni</button>
+    <button type="submit" name="" id="" class="btn btn-primary" role="button" data-action="mod_gmeet/sync_recordings">
+        {{#str}} sync_recording_button, mod_gmeet {{/str}}
+    </button>
 </form>
 
 {{/isowner}}
-{{#meetingRecordings}}
-<div class="table-responsive recordings-table rounded-3">
-    <table class="table mt-3">
-        <thead>
-            <tr>
-                <th scope="col">Nome registrazione</th>
-                <th scope="col">Link</th>
-
-            </tr>
-        </thead>
-        <tbody class="recordings_tbody">
-            {{#records}}
-            <tr class="">
-                <td>{{namerecording}}</td>
-                <td scope="row"><a name="" id="" class="btn btn-primary" href="{{recordingsfileurl}}" role="button"
-                        target="_blank" rel="noreferrer noopener">Registrazione</a>
-                </td>
-            </tr>
-            {{/records}}
-        </tbody>
-    </table>
-</div>
-{{/meetingRecordings}}
