@@ -21,31 +21,41 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import ModalForm from 'core_form/modalform';
-import {get_string as getString} from 'core/str';
-import {getRecording, updateRecording} from './ajax_call';
-import {add as addToast} from 'core/toast';
+import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
+import { get_string as getString } from 'core/str';
+import { getRecording, updateRecording, deleteRecording } from './ajax_call';
+import { add as addToast } from 'core/toast';
 
 const Selectors = {
     actions: {
         syncRecordings: '[data-action="mod_gmeet/sync_recordings"]',
-        editRecording:  '[data-role=editfield][data-id]',
+        editRecording: '[data-role=editfield][data-id]',
+        deleteRecording: '[data-role=deletefield][data-id]'
     },
 };
 
-const asyncGetRecording = async(id) => {
+const asyncGetRecording = async (id) => {
     const recording = await getRecording(id);
     return recording;
 };
 
-const asyncUpdateRecording = async(recording) => {
+const asyncUpdateRecording = async (recording) => {
     const response = await updateRecording(recording);
     return response;
 };
 
-const registerEventListeners = () => {
+const asyncDeleteRecording = async (id) => {
+    const response = await deleteRecording(id);
+    return response;
+};
+
+
+const registerEventListeners = (deletemodal) => {
     document.addEventListener('click', e => {
         const editingRecordingelement = e.target.closest(Selectors.actions.editRecording);
         const syncRecordingelement = e.target.closest(Selectors.actions.syncRecordings);
+        const deleteRecordingelement = e.target.closest(Selectors.actions.deleteRecording);
         if (editingRecordingelement) {
             e.preventDefault();
             const recordingid = editingRecordingelement.getAttribute('data-id');
@@ -54,7 +64,7 @@ const registerEventListeners = () => {
                     // Name of the class where form is defined (must extend \core_form\dynamic_form):
                     formClass: "mod_gmeet\\recording_form",
                     // Add as many arguments as you need, they will be passed to the form:
-                    args: { id: recordingid, recordingname:values.name, recordingdescription:values.description},
+                    args: { id: recordingid, recordingname: values.name, recordingdescription: values.description },
                     // Pass any configuration settings to the modal dialogue, for example, the title:
                     modalConfig: {
                         title: getString('editingfield', 'mod_gmeet', editingRecordingelement.getAttribute('data-name'))
@@ -66,26 +76,44 @@ const registerEventListeners = () => {
                     const formdata = e.detail;
                     addToast(getString('edittoast', 'mod_gmeet'));
                     asyncUpdateRecording(formdata)
-                    .then(() => {
-                        location.reload();
-                    });
+                        .then(() => {
+                            location.reload();
+                        });
                 });
                 // Show the form.
                 modalForm.show();
             });
         }
         if (syncRecordingelement) {
-                e.preventDefault();
-                addToast(getString('synctoast', 'mod_gmeet'));
-                const form = document.getElementById('syncForm');
-                form.submit();
-                syncRecordingelement.disabled = true;
+            e.preventDefault();
+            addToast(getString('synctoast', 'mod_gmeet'));
+            const form = document.getElementById('syncForm');
+            form.submit();
+            syncRecordingelement.disabled = true;
         }
+        if (deleteRecordingelement) {
+            const recordingid = deleteRecordingelement.getAttribute('data-id');
+            e.preventDefault();
+            deletemodal.show();
+            deletemodal.getRoot().on(ModalEvents.save, () => {
+                addToast(getString('deletetoast', 'mod_gmeet'),{
+                    type:'danger',
+                });
+                asyncDeleteRecording(recordingid).then(location.reload());
+            });
+        }
+
     });
 };
 
-
-
-export const init = () => {
-    registerEventListeners();
+export const init =  async () => {
+    const deleteform = await ModalFactory.create({
+        type: ModalFactory.types.SAVE_CANCEL,
+        title: getString('delete_form_title','mod_gmeet'),
+        body: getString('delete_form_body','mod_gmeet'),
+        buttons:{
+            'save':getString('delete_form_button','mod_gmeet'),
+        }
+    });
+    registerEventListeners(deleteform);
 };

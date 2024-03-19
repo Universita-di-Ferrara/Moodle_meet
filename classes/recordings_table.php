@@ -89,6 +89,34 @@ class recordings_table extends table_sql {
         } else return NULL;
     }
 
+    function col_action($values) {
+        global $OUTPUT, $COURSE;
+        $context = \context_course::instance($COURSE->id);
+        if (has_capability('moodle/course:update', $context)) {
+            // Made an icon nested link for actions.
+            $startdiv = html_writer::start_div();
+            $icon = $OUTPUT->pix_icon('action','Modifica','mod_gmeet');
+            $linkedit = html_writer::link("#",$icon,[
+                'data-role'=>'editfield', 
+                'data-id' => $values->id,
+                'class' => 'mr-3'
+            ]);
+
+            $icon = $OUTPUT->pix_icon('trash','Elimina','mod_gmeet');
+            $linkdelete = html_writer::link("#",$icon,[
+                'data-role'=>'deletefield', 
+                'data-id' => $values->id,
+                'class' => 'mr-3',
+            ]);
+
+            $enddiv = html_writer::end_div();
+
+            $html = $startdiv.$linkedit.$linkdelete.$enddiv;
+            return $html;
+        } 
+        return NULL;
+    }
+
     /**
      * This function is called for each data row to allow processing of
      * columns which do not have a *_cols function.
@@ -96,14 +124,7 @@ class recordings_table extends table_sql {
      *     been made.
      */
     function other_cols($colname, $value) {
-        global $OUTPUT, $COURSE;
-        $context = \context_course::instance($COURSE->id);
-        if ($colname == 'action' && has_capability('moodle/course:update', $context)) {
-            // Made an icon nested link for actions.
-            $icon = $OUTPUT->pix_icon('action','Modifica','mod_gmeet');
-            $link = html_writer::link("#",$icon,['data-role'=>'editfield', 'data-id' => $value->id]);
-            return $link;
-        } 
+        
         return NULL;
     }
 

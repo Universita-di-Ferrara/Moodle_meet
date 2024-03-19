@@ -42,5 +42,13 @@ $functions = [
         'description' => 'Update Recording',
         'type' => 'write',
         'ajax' => true,
-    ]
+    ],
+    'mod_gmeet_delete_recording' => [
+        'classname' => 'mod_gmeet\external\delete_recording',
+        'methodname' => 'delete_recording',
+        'description' => 'Delete Recording',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+
 ];

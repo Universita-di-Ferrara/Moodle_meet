@@ -50,6 +50,7 @@ $string['recording_link_button'] = 'Open Recording';
 $string['editingfield'] = 'Recording \'s edit form';
 $string['synctoast'] = "Retrieving last recordings ...";
 $string['edittoast'] = "Saving changes...";
+$string['deletetoast'] = "Deleting recording...";
 $string['join_meet_button'] = "Join Meet";
 $string['sync_recording_button'] = "Sync last recordings";
 $string['join_meet_info'] = "Click the button below to join the meeting room";
@@ -58,4 +59,7 @@ $string['desc_table_header'] = "Recording's description";
 $string['date_table_header'] = "Recording's date";
 $string['link_table_header'] = "Recording";
 $string['action_table_header'] = "Action";
+$string['delete_form_title'] = "Delete Recording";
+$string['delete_form_body'] = "Are you sure to delete this recording?";
+$string['delete_form_button'] = "Delete";
 
