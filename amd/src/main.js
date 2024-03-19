@@ -20,45 +20,72 @@
  * @copyright  2024 YOUR NAME <your@email.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-import { exception as displayException } from 'core/notification';
-import Templates from 'core/templates';
-
-/* 
-const context = {
-    'synced_recordings': ['www.pippotest.com',"www.plutotest.it"]
-}; */
+import ModalForm from 'core_form/modalform';
+import {get_string as getString} from 'core/str';
+import {getRecording, updateRecording} from './ajax_call';
+import {add as addToast} from 'core/toast';
 
 const Selectors = {
     actions: {
         syncRecordings: '[data-action="mod_gmeet/sync_recordings"]',
+        editRecording:  '[data-role=editfield][data-id]',
     },
 };
 
+const asyncGetRecording = async(id) => {
+    const recording = await getRecording(id);
+    return recording;
+};
 
+const asyncUpdateRecording = async(recording) => {
+    const response = await updateRecording(recording);
+    return response;
+};
 
-const registerEventListeners = (meeting_code) => {
+const registerEventListeners = () => {
     document.addEventListener('click', e => {
-        if (e.target.closest(Selectors.actions.syncRecordings)) {
-            
-            // This will call the function to load and render our template.
-            Templates.renderForPromise('mod_gmeet/row_recordings_table', context)
-
-                // It returns a promise that needs to be resoved.
-                .then(({ html, js }) => {
-                    // Here eventually I have my compiled template, and any javascript that it generated.
-                    // The templates object has append, prepend and replace functions.
-                    Templates.appendNodeContents('.recordings_tbody', html, js);
-                })
-
-                // Deal with this exception (Using core/notify exception function is recommended).
-                .catch((error) => displayException(error));
-
-
+        const editingRecordingelement = e.target.closest(Selectors.actions.editRecording);
+        const syncRecordingelement = e.target.closest(Selectors.actions.syncRecordings);
+        if (editingRecordingelement) {
+            e.preventDefault();
+            const recordingid = editingRecordingelement.getAttribute('data-id');
+            asyncGetRecording(recordingid).then((values) => {
+                const modalForm = new ModalForm({
+                    // Name of the class where form is defined (must extend \core_form\dynamic_form):
+                    formClass: "mod_gmeet\\recording_form",
+                    // Add as many arguments as you need, they will be passed to the form:
+                    args: { id: recordingid, recordingname:values.name, recordingdescription:values.description},
+                    // Pass any configuration settings to the modal dialogue, for example, the title:
+                    modalConfig: {
+                        title: getString('editingfield', 'mod_gmeet', editingRecordingelement.getAttribute('data-name'))
+                    },
+                    // DOM element that should get the focus after the modal dialogue is closed:
+                    returnFocus: editingRecordingelement,
+                });
+                modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e) => {
+                    const formdata = e.detail;
+                    addToast(getString('edittoast', 'mod_gmeet'));
+                    asyncUpdateRecording(formdata)
+                    .then(() => {
+                        location.reload();
+                    });
+                });
+                // Show the form.
+                modalForm.show();
+            });
+        }
+        if (syncRecordingelement) {
+                e.preventDefault();
+                addToast(getString('synctoast', 'mod_gmeet'));
+                const form = document.getElementById('syncForm');
+                form.submit();
+                syncRecordingelement.disabled = true;
         }
     });
 };
 
-export const init = (meeting_code) => {
-    registerEventListeners(meeting_code);
+
+
+export const init = () => {
+    registerEventListeners();
 };
