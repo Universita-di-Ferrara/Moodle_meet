@@ -278,7 +278,7 @@ class handler {
     /**
      * List all conference filtered by $meetingcode and start_time >= $timestamp
      *
-     * @param string $spacename meeting_code
+     * @param string $spacename space name
      * @param string $timestamp timestamp of day from which start filtering
      * @param string $pagetoken nextPageToken if it's not display all results
      *
