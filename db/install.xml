@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/gmeet/db" VERSION="20240312" COMMENT="XMLDB file for Moodle mod_gmeet"
+<XMLDB PATH="mod/gmeet/db" VERSION="20240318" COMMENT="XMLDB file for Moodle mod_gmeet"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -28,6 +28,7 @@
         <FIELD NAME="file_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="meet_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="date" TYPE="timestamp" NOTNULL="false" SEQUENCE="false" COMMENT="Recording date"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
