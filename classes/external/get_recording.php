@@ -16,6 +16,7 @@
 
 namespace mod_gmeet\external;
 
+require_once($CFG->dirroot . '/lib/externallib.php');
 use external_function_parameters;
 use external_single_structure;
 use external_value;

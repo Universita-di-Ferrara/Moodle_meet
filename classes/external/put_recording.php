@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_gmeet\external;
+require_once($CFG->dirroot . '/lib/externallib.php');
 
 use external_function_parameters;
 use external_single_structure;
