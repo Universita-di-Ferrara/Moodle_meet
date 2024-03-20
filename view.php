@@ -100,11 +100,9 @@ $renderable = new mod_gmeet\output\view($spaceinfo);
 echo $output->render($renderable);
 
 $table = new recordings_table('uniqueid');
-
 // Work out the sql for the table.
 $table->set_sql('id, name, description, date,file_id', "{gmeet_recordings}","meet_id = $moduleinstance->id");
 $table->define_baseurl($PAGE->url);
-
 
 echo(html_writer::start_div('mt-5'));
 $table->out(10, true);

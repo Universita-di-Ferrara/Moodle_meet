@@ -76,7 +76,12 @@ class recordings_table extends table_sql {
 
         $link = str_replace("{file_id}",$values->file_id,$this::GOOGLE_ENDPOINT);
         // If the data is being downloaded than we don't want to show HTML.
-        $button = html_writer::link ($link,get_string('recording_link_button','gmeet'),['class' => 'btn btn-primary']);
+        $button = html_writer::link ($link,get_string('recording_link_button','gmeet'),
+        [
+            'class' => 'btn btn-primary',
+            'target' => "_blank",
+            'rel' => "noreferrer noopener",
+        ]);
         return $button;
         
     }

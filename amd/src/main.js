@@ -42,12 +42,16 @@ const asyncGetRecording = async (id) => {
 
 const asyncUpdateRecording = async (recording) => {
     const response = await updateRecording(recording);
-    return response;
+    if (response.responsecode) {
+        window.location.reload(true);
+    }
 };
 
 const asyncDeleteRecording = async (id) => {
     const response = await deleteRecording(id);
-    return response;
+    if (response.responsecode) {
+        window.location.reload(true);
+    }
 };
 
 
@@ -75,10 +79,7 @@ const registerEventListeners = (deletemodal) => {
                 modalForm.addEventListener(modalForm.events.FORM_SUBMITTED, (e) => {
                     const formdata = e.detail;
                     addToast(getString('edittoast', 'mod_gmeet'));
-                    asyncUpdateRecording(formdata)
-                        .then(() => {
-                            location.reload();
-                        });
+                    asyncUpdateRecording(formdata);
                 });
                 // Show the form.
                 modalForm.show();
@@ -99,7 +100,7 @@ const registerEventListeners = (deletemodal) => {
                 addToast(getString('deletetoast', 'mod_gmeet'),{
                     type:'danger',
                 });
-                asyncDeleteRecording(recordingid).then(location.reload());
+                asyncDeleteRecording(recordingid);
             });
         }
 
