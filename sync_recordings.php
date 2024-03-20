@@ -88,6 +88,7 @@ if ($_POST) {
                 $dataobj->meet_id = $instanceid;
                 $dataobj->name = "Registrazione del $giorno alle $orario";
                 $dataobj->date = $datetimesql;
+                $dataobj->description = '';
                 $DB->insert_record('gmeet_recordings', $dataobj);
                 $googlehandler->sharefile_request($record->driveDestination->file, $domain);
             }

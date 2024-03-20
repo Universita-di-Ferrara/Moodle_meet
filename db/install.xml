@@ -28,7 +28,7 @@
         <FIELD NAME="file_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="meet_id" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="description" TYPE="text" NOTNULL="true" DEFAULT="" SEQUENCE="false"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="date" TYPE="datetime" NOTNULL="false" SEQUENCE="false" COMMENT="Recording date"/>
       </FIELDS>
       <KEYS>
