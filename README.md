@@ -1,6 +1,6 @@
 # Moodle_meet #
+<img width="1303" alt="Screenshot 2024-03-20 alle 10 22 16" src="https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/398c3270-9825-4afc-8923-7598cc588be3">
 
-![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/9e6921d0-f1ab-4712-848c-9b568f65eb63)
 
 Modulo di attvità Google meet: creazione di una stanza meet per conferenze.
 
