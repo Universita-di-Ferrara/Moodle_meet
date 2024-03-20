@@ -50,7 +50,7 @@ Alternatively, you can run
 to complete the installation from the command line.
 
 ## Screenshot ##
-![image](https://github.com/Universita-di-Ferrara/Moodle_meet/assets/95679085/1da36ec2-68f8-481f-9cff-18480049a8cc)
+<img width="1303" alt="Screenshot 2024-03-20 alle 10 22 16" src="https://github.com/Universita-di-Ferrara/Moodle_meet/assets/80053276/efbf23dc-f9a2-44df-bb34-9d0a1c6e7c0e">
 
 
 
