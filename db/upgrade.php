@@ -34,8 +34,5 @@
 function xmldb_gmeet_upgrade($oldversion) {
     global $DB;
     $dbman = $DB->get_manager();
-
-
-
     return true;
 }

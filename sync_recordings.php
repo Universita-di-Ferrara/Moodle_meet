@@ -70,6 +70,10 @@ if ($_POST) {
             if (!($record->state == 'FILE_GENERATED')) {
                 continue;
             }
+            $file = $googlehandler->getfile_request($record->driveDestination->file);
+            if (!($file) || $file->trashed) {
+                continue;
+            };
             // Controllo che non esista già il record (es più sync al giorno).
             $textcomparefileid = $DB->sql_compare_text('file_id');
             $textcomparefileidplaceholder = $DB->sql_compare_text(':file_id');

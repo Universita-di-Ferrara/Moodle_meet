@@ -25,14 +25,50 @@ namespace mod_gmeet;
  */
 class recording_form extends \core_form\dynamic_form {
 
+    /**
+     * Returns context where this form is used
+     *
+     * This context is validated in {@see \external_api::validate_context()}
+     *
+     * If context depends on the form data, it is available in $this->_ajaxformdata or
+     * by calling $this->optional_param()
+     *
+     * Example:
+     *     $cmid = $this->optional_param('cmid', 0, PARAM_INT);
+     *     return context_module::instance($cmid);
+     *
+     * @return \context
+     */
     protected function get_context_for_dynamic_submission(): \context {
         return \context_system::instance();
     }
 
+    /**
+     * Checks if current user has access to this form, otherwise throws exception
+     *
+     * Sometimes permission check may depend on the action and/or id of the entity.
+     * If necessary, form data is available in $this->_ajaxformdata or
+     * by calling $this->optional_param()
+     *
+     * Example:
+     *     require_capability('dosomething', $this->get_context_for_dynamic_submission());
+     */
     protected function check_access_for_dynamic_submission(): void {
         require_capability('mod/gmeet:addinstance', $this->get_context_for_dynamic_submission());
     }
 
+    /**
+     * Load in existing data as form defaults
+     *
+     * Can be overridden to retrieve existing values from db by entity id and also
+     * to preprocess editor and filemanager elements
+     *
+     * Example:
+     *     $id = $this->optional_param('id', 0, PARAM_INT);
+     *     $data = api::get_entity($id); // For example, retrieve a row from the DB.
+     *     file_prepare_standard_filemanager($data, ...);
+     *     $this->set_data($data);
+     */
     public function set_data_for_dynamic_submission(): void {
         $this->set_data([
             'id' => $this->optional_param('id', '', PARAM_INT),
@@ -41,9 +77,28 @@ class recording_form extends \core_form\dynamic_form {
         ] + $this->get_options());
     }
 
+    /**
+     * Process the form submission, used if form was submitted via AJAX
+     *
+     * This method can return scalar values or arrays that can be json-encoded, they will be passed to the caller JS.
+     *
+     * Submission data can be accessed as: $this->get_data()
+     *
+     * Example:
+     *     $data = $this->get_data();
+     *     file_postupdate_standard_filemanager($data, ....);
+     *     api::save_entity($data); // Save into the DB, trigger event, etc.
+     *
+     * @return mixed
+     */
     public function process_dynamic_submission() {
         return $this->get_data();
     }
+
+    /**
+     * Return option for the form
+     * @return mixed $rv
+     */
     protected function get_options(): array {
         $rv = [];
         if (!empty($this->_ajaxformdata['option']) && is_array($this->_ajaxformdata['option'])) {
@@ -54,7 +109,9 @@ class recording_form extends \core_form\dynamic_form {
         return $rv;
     }
 
-
+    /**
+     * Defines forms elements
+     */
     public function definition() {
         $mform = $this->_form;
 
@@ -70,8 +127,22 @@ class recording_form extends \core_form\dynamic_form {
         $mform->addElement('textarea', 'recordingdescription', get_string('desc_table_header', 'mod_gmeet'), 'size="50"');
         $mform->addRule('recordingdescription', null, 'required', null, 'client');
         $mform->setType('recordingdescription', PARAM_TEXT);
-     }
+    }
 
+    /**
+     * Returns url to set in $PAGE->set_url() when form is being rendered or submitted via AJAX
+     *
+     * This is used in the form elements sensitive to the page url, such as Atto autosave in 'editor'
+     *
+     * If the form has arguments (such as 'id' of the element being edited), the URL should
+     * also have respective argument.
+     *
+     * Example:
+     *     $id = $this->optional_param('id', 0, PARAM_INT);
+     *     return new moodle_url('/my/page/where/form/is/used.php', ['id' => $id]);
+     *
+     * @return moodle_url
+     */
     protected function get_page_url_for_dynamic_submission(): \moodle_url {
         return new \moodle_url('/mod/gmeet/oauth2callback.php');
     }

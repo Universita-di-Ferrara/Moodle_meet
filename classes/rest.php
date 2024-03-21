@@ -76,6 +76,15 @@ class rest extends \core\oauth2\rest {
                 ],
                 'response' => 'json',
             ],
+            'get_file' => [
+                'endpoint' => 'https://www.googleapis.com/drive/v3/files/{fileid}?fields={fields}',
+                'method' => 'get',
+                'args' => [
+                    'fileid' => PARAM_TEXT,
+                    'fields' => PARAM_TEXT,
+                ],
+                'response' => 'json',
+            ],
         ];
     }
 }

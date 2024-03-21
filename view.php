@@ -26,7 +26,7 @@ use mod_gmeet\recordings_table;
 
 require(__DIR__ . '/../../config.php');
 require_once(__DIR__ . '/lib.php');
-require_once ("$CFG->libdir/tablelib.php");
+require_once("$CFG->libdir/tablelib.php");
 
 // Course module id.
 $id = optional_param('id', 0, PARAM_INT);
@@ -101,7 +101,7 @@ echo $output->render($renderable);
 
 $table = new recordings_table('uniqueid');
 // Work out the sql for the table.
-$table->set_sql('id, name, description, date,file_id', "{gmeet_recordings}","meet_id = $moduleinstance->id");
+$table->set_sql('id, name, description, date,file_id', "{gmeet_recordings}", "meet_id = $moduleinstance->id");
 $table->define_baseurl($PAGE->url);
 
 echo(html_writer::start_div('mt-5'));

@@ -358,7 +358,29 @@ class handler {
             $response = $this->request($service, 'get_space', $args, false);
             return true;
         } catch (\Throwable $th) {
-            error_log($th->getMessage());
+            debugging($th->getMessage());
+            return false;
+        }
+    }
+    /**
+     * get the file
+     *
+     * @param string $fileid fileid
+     *
+     * @return $response file
+     */
+    public function getfile_request($fileid) {
+
+        $service = new rest($this->get_oauth_client());
+        $args = [
+            'fileid' => $fileid,
+            'fields' => 'id, name, trashed',
+        ];
+        try {
+            $response = $this->request($service, 'get_file', $args, false);
+            return $response;
+        } catch (\Throwable $th) {
+            debugging($th->getMessage());
             return false;
         }
     }

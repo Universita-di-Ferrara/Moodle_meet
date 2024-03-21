@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_gmeet\external;
+
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/externallib.php');
 
 use external_function_parameters;
@@ -33,10 +35,11 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class put_recording extends external_api {
-
     /**
      * Function for retrieving recordings from gmeet_recordings table
      * @param int $id recordings id
+     * @param string $name recordings name
+     * @param string $description recordings description
      * @return object $recording recording'row
      */
     public static function put_recording($id, $name , $description) {
@@ -48,7 +51,7 @@ class put_recording extends external_api {
         $params = self::validate_parameters(self::put_recording_parameters(), [
             'id' => $id,
             'name' => $name,
-            'description' => $description,    
+            'description' => $description,
         ]);
 
         if (!(isset($params['name']) && isset($params['description']))) {
@@ -59,14 +62,12 @@ class put_recording extends external_api {
         $recording->id = $params['id'];
         $recording->name = $params['name'];
         $recording->description = $params['description'];
-         
+
         $response = $DB->update_record('gmeet_recordings', $recording);
 
         $result = new stdClass;
         $result->responsecode = $response;
         return $result;
-
-
     }
 
     /**
@@ -78,7 +79,7 @@ class put_recording extends external_api {
     public static function put_recording_parameters() {
         return new external_function_parameters([
             'id' => new external_value(PARAM_INT, 'recording \'s id', VALUE_REQUIRED),
-            'name' => new external_value(PARAM_TEXT, 'recording \'s name',VALUE_DEFAULT, null),
+            'name' => new external_value(PARAM_TEXT, 'recording \'s name', VALUE_DEFAULT, null),
             'description' => new external_value(PARAM_TEXT, 'recording \'s description', VALUE_DEFAULT, null),
         ]);
     }

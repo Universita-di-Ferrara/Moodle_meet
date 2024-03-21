@@ -15,6 +15,8 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace mod_gmeet\external;
+
+defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/externallib.php');
 
 use external_function_parameters;
@@ -32,29 +34,27 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class delete_recording extends external_api {
-        /**
+    /**
      * Function for retrieving recordings from gmeet_recordings table
      * @param int $id recordings id
      * @return object $recording recording'row
      */
-    public static function delete_recording($id) {
+    public static function delete_recording(int $id) {
         global $DB;
 
         $context = context_system::instance();
         require_capability('mod/gmeet:addinstance', $context);
 
         $params = self::validate_parameters(self::delete_recording_parameters(), [
-            'id' => $id,  
+            'id' => $id,
         ]);
         $id = $params['id'];
-         
+
         $response = $DB->delete_records('gmeet_recordings', ['id' => $id]);
 
         $result = new stdClass;
         $result->responsecode = $response;
         return $result;
-
-
     }
 
     /**

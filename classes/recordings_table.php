@@ -30,6 +30,10 @@ use table_sql;
  */
 class recordings_table extends table_sql {
 
+    /**
+     * Google Drive endpoint for web file
+     * @var string
+     */
     const GOOGLE_ENDPOINT = 'https://drive.google.com/file/d/{file_id}/view?usp=drive_web';
 
     /**
@@ -37,12 +41,12 @@ class recordings_table extends table_sql {
      * @param int $uniqueid all tables have to have a unique id, this is used
      *      as a key when storing table properties like sort order in the session.
      */
-    function __construct($uniqueid) {
+    public function __construct($uniqueid) {
         global $COURSE;
         $context = \context_course::instance($COURSE->id);
         parent::__construct($uniqueid);
         // Define the list of columns to show.
-        $columns = array('id', 'name', 'description', 'date', 'file_id');
+        $columns = ['id', 'name', 'description', 'date', 'file_id'];
         // Check if user has the capability to update a course(teacher??).
         if (has_capability('moodle/course:update', $context)) {
             array_push($columns, 'action');
@@ -59,7 +63,7 @@ class recordings_table extends table_sql {
         ];
         // Check if user has the capability to update a course(teacher??).
         if (has_capability('moodle/course:update', $context)) {
-            array_push($headers, get_string('action_table_header', 'mod_gmeet'),);
+            array_push($headers, get_string('action_table_header', 'mod_gmeet'));
         }
         $this->define_headers($headers);
     }
@@ -72,44 +76,58 @@ class recordings_table extends table_sql {
      * @return $string Return username with link to profile or username only
      *     when downloading.
      */
-    function col_file_id($values) {
+    public function col_file_id($values) {
 
-        $link = str_replace("{file_id}",$values->file_id,$this::GOOGLE_ENDPOINT);
+        $link = str_replace("{file_id}", $values->file_id, $this::GOOGLE_ENDPOINT);
         // If the data is being downloaded than we don't want to show HTML.
-        $button = html_writer::link ($link,get_string('recording_link_button','gmeet'),
+        $button = html_writer::link ($link, get_string('recording_link_button', 'gmeet'),
         [
             'class' => 'btn btn-primary',
             'target' => "_blank",
             'rel' => "noreferrer noopener",
         ]);
         return $button;
-        
     }
 
-    function col_date($values) {
+    /**
+     * This function is called for each data row to allow processing of the
+     * date value.
+     *
+     * @param object $values Contains object with all the values of record.
+     * @return $string Return formatted date
+     */
+    public function col_date($values) {
         if (isset($values->date)) {
-            $datetime = DateTime::createFromFormat('Y-m-d H:i:s',$values->date);
+            $datetime = DateTime::createFromFormat('Y-m-d H:i:s', $values->date);
             $date = $datetime->format('d-m-Y');
             return $date;
-        } else return NULL;
+        }
+        return null;
     }
 
-    function col_action($values) {
+    /**
+     * This function is called for each data row to allow processing of the
+     * action value.
+     *
+     * @param object $values Contains object with all the values of record.
+     * @return $html Return html string with buttons
+     */
+    public function col_action($values) {
         global $OUTPUT, $COURSE;
         $context = \context_course::instance($COURSE->id);
         if (has_capability('moodle/course:update', $context)) {
             // Made an icon nested link for actions.
             $startdiv = html_writer::start_div();
-            $icon = $OUTPUT->pix_icon('action','Modifica','mod_gmeet');
-            $linkedit = html_writer::link("#",$icon,[
-                'data-role'=>'editfield', 
+            $icon = $OUTPUT->pix_icon('action', 'Modifica', 'mod_gmeet');
+            $linkedit = html_writer::link("#", $icon, [
+                'data-role' => 'editfield',
                 'data-id' => $values->id,
-                'class' => 'mr-3'
+                'class' => 'mr-3',
             ]);
 
-            $icon = $OUTPUT->pix_icon('trash','Elimina','mod_gmeet');
-            $linkdelete = html_writer::link("#",$icon,[
-                'data-role'=>'deletefield', 
+            $icon = $OUTPUT->pix_icon('trash', 'Elimina', 'mod_gmeet');
+            $linkdelete = html_writer::link("#", $icon, [
+                'data-role' => 'deletefield',
                 'data-id' => $values->id,
                 'class' => 'mr-3',
             ]);
@@ -118,23 +136,27 @@ class recordings_table extends table_sql {
 
             $html = $startdiv.$linkedit.$linkdelete.$enddiv;
             return $html;
-        } 
-        return NULL;
+        }
+        return null;
     }
 
     /**
      * This function is called for each data row to allow processing of
      * columns which do not have a *_cols function.
-     * @return string return processed value. Return NULL if no change has
-     *     been made.
+     * @param string $colname name of the column to check
+     * @param string $value value of the column
+     * @return string return processed value. Return null if no change has
+     * been made.
      */
-    function other_cols($colname, $value) {
-        
-        return NULL;
+    public function other_cols($colname, $value) {
+        return null;
     }
 
-    function get_sql_sort()
-    {
+    /**
+     * This function is called for sql sort param
+     * @return string $sql return SORT SQL
+     */
+    public function get_sql_sort() {
         $sql = 'date DESC';
         return $sql;
     }
