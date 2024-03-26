@@ -38,7 +38,7 @@ $logout = optional_param('logout', 0, PARAM_BOOL);
 
 $client = new handler();
 
-// Recupera l'istanza dell'attività.
+// Get Activity instance
 if ($id) {
     $cm = get_coursemodule_from_id('gmeet', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -51,7 +51,7 @@ if ($id) {
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-// Renderizzazione della pagina dell'attività.
+// Render activity page
 $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -61,7 +61,7 @@ $PAGE->requires->js_call_amd('mod_gmeet/main', 'init');
 if ($logout) {
     $client->logout();
 }
-// Impostazione url nella sessione.
+// Set URL in Session
 $SESSION->redirecturl = $PAGE->url;
 $ownership = false;
 $loggedin = $client->check_login();
