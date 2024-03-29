@@ -15,13 +15,17 @@ Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficial
 
 Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
 
-### Su Google Cloud: ### 
+###Per prima cosa configurare il progetto su Google Cloud: ### 
 
 1. **Creare un progetto** all'interno della [Google Cloud Platform](https://console.cloud.google.com/),
 
-2. Dal Menù API e Servizi **abilitare le API** necessarie: _Google Meet_ e _Google Drive_ .
+2. Dal Menù API e Servizi **abilitare le API** necessarie: 
 
-3. **Creare delle nuove credenziali** *ID client OAuth 2.0* di tipologia "Applicazione Web".
+   _Google Meet_
+
+   _Google Drive_
+
+4. **Creare delle nuove credenziali** *ID client OAuth 2.0* di tipologia "Applicazione Web".
    
 5. Durante la configurazioni di tali credenziali, **aggiungere alla sezione** *URI di reindirizzamento autorizzati* il seguente URI: 
    **{your_moodle_url}/mod/gmeet/oauth2callback.php**
