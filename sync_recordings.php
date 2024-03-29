@@ -27,83 +27,81 @@ use mod_gmeet\google\handler;
 require('../../config.php');
 
 require_login();
+require_capability('mod/gmeet:addinstance', context_system::instance());
 
-if ($_POST) {
+$instanceid = required_param('instance_id', PARAM_INT);
+$spacename = required_param('space_name', PARAM_TEXT);
 
-    $settings = (get_config('gmeet'));
-    $domain = $settings->domain;
-    $spacename = $_POST['space_name'];
-    $instanceid = $_POST['instance_id'];
+$settings = (get_config('gmeet'));
+$domain = $settings->domain;
 
-    // Prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync.
-    $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIST);
+// Prendo l'instanza dell'attività, visto che devo aggiornare il campo last_sync.
+$moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIST);
 
-    // Default date.
-    $timestamp = make_timestamp((date('Y') - 1));
-    $data = str_replace('+00:00', 'Z', date('c', $timestamp));
+// Default date.
+$timestamp = make_timestamp((date('Y') - 1));
+$data = str_replace('+00:00', 'Z', date('c', $timestamp));
 
-    // Se il campo last_sync è valorizzato, prendo quello come timestamp.
-    if (isset($moduleinstance->last_sync)) {
-        $data = $moduleinstance->last_sync;
+// Se il campo last_sync è valorizzato, prendo quello come timestamp.
+if (isset($moduleinstance->last_sync)) {
+    $data = $moduleinstance->last_sync;
+}
+
+$googlehandler = new handler();
+$googlehandler->check_login();
+$nexttokenpage  = false;
+$allconference = [];
+do {
+    $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->space_name, $data, $nexttokenpage);
+    if (isset($responseconferencelist->nextPageToken)) {
+        $nexttokenpage = $responseconferencelist->nextPageToken;
     }
-
-    $googlehandler = new handler();
-    $googlehandler->check_login();
-    $nexttokenpage  = false;
-    $allconference = [];
-    do {
-        $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->space_name, $data, $nexttokenpage);
-        if (isset($responseconferencelist->nextPageToken)) {
-            $nexttokenpage = $responseconferencelist->nextPageToken;
-        }
-        if (isset($responseconferencelist->conferenceRecords)) {
-            $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
-        }
-
-    } while ($nexttokenpage);
-    foreach ($allconference as $element) {
-        $recordings  = $googlehandler->list_recordings_request($element->name);
-        if (!(isset($recordings->recordings))) {
+    if (isset($responseconferencelist->conferenceRecords)) {
+        $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
+    }
+} while ($nexttokenpage);
+foreach ($allconference as $element) {
+    $recordings  = $googlehandler->list_recordings_request($element->name);
+    if (!(isset($recordings->recordings))) {
+        continue;
+    }
+    foreach ($recordings->recordings as $record) {
+        if (!($record->state == 'FILE_GENERATED')) {
             continue;
         }
-        foreach ($recordings->recordings as $record) {
-            if (!($record->state == 'FILE_GENERATED')) {
-                continue;
-            }
-            $file = $googlehandler->getfile_request($record->driveDestination->file);
-            if (!($file) || $file->trashed) {
-                continue;
-            };
-            // Controllo che non esista già il record (es più sync al giorno).
-            $textcomparefileid = $DB->sql_compare_text('file_id');
-            $textcomparefileidplaceholder = $DB->sql_compare_text(':file_id');
-            $sql = "select * from {gmeet_recordings} where {$textcomparefileid} = {$textcomparefileidplaceholder}";
-            $fileexist = $DB->record_exists_sql($sql, ['file_id' => $record->driveDestination->file]);
-            if (!($fileexist)) {
-                // Giornata e orario della registrazione.
-                $datetime = new Datetime($record->startTime);
-                $datetimerome = $datetime->setTimezone(new DateTimeZone('Europe/Rome'));
-                $giorno = $datetimerome->format("d-m-Y");
-                $orario = $datetimerome->format("G:i");
-                $datetimesql = $datetimerome->format('Y-m-d H:i:s');
-                // Devo andare a salvare i valori in db dei recordings.
-                $dataobj = new stdClass();
-                $dataobj->file_id = $record->driveDestination->file;
-                $dataobj->meet_id = $instanceid;
-                $dataobj->name = "Registrazione del $giorno alle $orario";
-                $dataobj->date = $datetimesql;
-                $dataobj->description = '';
-                $DB->insert_record('gmeet_recordings', $dataobj);
-                $googlehandler->sharefile_request($record->driveDestination->file, $domain);
-            }
+        $file = $googlehandler->getfile_request($record->driveDestination->file);
+        if (!($file) || $file->trashed) {
+            continue;
+        };
+        // Controllo che non esista già il record (es più sync al giorno).
+        $textcomparefileid = $DB->sql_compare_text('file_id');
+        $textcomparefileidplaceholder = $DB->sql_compare_text(':file_id');
+        $sql = "select * from {gmeet_recordings} where {$textcomparefileid} = {$textcomparefileidplaceholder}";
+        $fileexist = $DB->record_exists_sql($sql, ['file_id' => $record->driveDestination->file]);
+        if (!($fileexist)) {
+            // Giornata e orario della registrazione.
+            $datetime = new Datetime($record->startTime);
+            $datetimerome = $datetime->setTimezone(new DateTimeZone('Europe/Rome'));
+            $giorno = $datetimerome->format("d-m-Y");
+            $orario = $datetimerome->format("G:i");
+            $datetimesql = $datetimerome->format('Y-m-d H:i:s');
+            // Devo andare a salvare i valori in db dei recordings.
+            $dataobj = new stdClass();
+            $dataobj->file_id = $record->driveDestination->file;
+            $dataobj->meet_id = $instanceid;
+            $dataobj->name = "Registrazione del $giorno alle $orario";
+            $dataobj->date = $datetimesql;
+            $dataobj->description = '';
+            $DB->insert_record('gmeet_recordings', $dataobj);
+            $googlehandler->sharefile_request($record->driveDestination->file, $domain);
         }
     }
-    // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
-    $todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
-    $timestampgoogle = str_replace('+00:00', 'Z', date('c', $todaytimestamp));
-    $moduleinstance->last_sync = $timestampgoogle;
-    $DB->update_record('gmeet', $moduleinstance);
-
-    header('location:' . $SESSION->redirecturl);
-    exit();
 }
+// Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
+$todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
+$timestampgoogle = str_replace('+00:00', 'Z', date('c', $todaytimestamp));
+$moduleinstance->last_sync = $timestampgoogle;
+$DB->update_record('gmeet', $moduleinstance);
+
+header('location:' . $SESSION->redirecturl);
+exit();
