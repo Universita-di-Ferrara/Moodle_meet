@@ -57,8 +57,9 @@ Alternatively, you can run
 
 to complete the installation from the command line.
 
+## Inspired by ##
 
-
+[Google Meet™ for Moodle](https://github.com/ronefel/moodle-mod_googlemeet) by [Rone Santos](https://github.com/ronefel)
 
 ## License ##
 
