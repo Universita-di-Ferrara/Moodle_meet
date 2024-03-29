@@ -28,7 +28,7 @@ Prima di installare il plugin sarà necessario effettuare delle configurazioni i
 
 ### Su Moodle ### 
 
-1. _Amministrazione del sito_ > _ Gestione Autenticazione_ > Abilitare OAuth 2
+1. _Amministrazione del sito_ > _Servizi OAuth 2_ > Abilitare OAuth 2
 
 2. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
 
