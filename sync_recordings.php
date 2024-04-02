@@ -41,7 +41,8 @@ $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIS
 // Default date.
 $timestamp = make_timestamp((date('Y') - 1));
 debugging("Timestamp default date: $timestamp",DEBUG_DEVELOPER);
-$data = str_replace('+00:00', 'Z', date('c', $timestamp));
+$offset_local = date('P',$timestamp);
+$data = str_replace($offset_local, 'Z', date('c', $timestamp));
 
 // Se il campo last_sync è valorizzato, prendo quello come timestamp.
 if (isset($moduleinstance->last_sync)) {
@@ -101,7 +102,8 @@ foreach ($allconference as $element) {
 // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
 $todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
 debugging("Timestamp di aggiornamento attuale con make_timestamp: $todaytimestamp", DEBUG_DEVELOPER);
-$timestampgoogle = str_replace('+00:00', 'Z', date('c', $todaytimestamp));
+$offset_local = date('P',$todaytimestamp);
+$timestampgoogle = str_replace($offset_local, 'Z', date('c', $todaytimestamp));
 debugging("Timestamp di aggiornamento attuale con str_replace: $timestampgoogle", DEBUG_DEVELOPER);
 $moduleinstance->last_sync = $timestampgoogle;
 $DB->update_record('gmeet', $moduleinstance);
