@@ -292,6 +292,9 @@ class handler {
         $args = [
             'filter' => "space.name = $spacename start_time >= $jsonencodedtimestamp",
         ];
+        if(debugging('',DEBUG_DEVELOPER)) {
+            debugging(print_r($args,true));
+        };
         if ($pagetoken) {
             $argsraw = [
                 'pageToken' => $argsraw,

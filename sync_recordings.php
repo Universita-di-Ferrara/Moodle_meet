@@ -99,9 +99,18 @@ foreach ($allconference as $element) {
 }
 // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
 $todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
+debugging("Timestamp di aggiornamento attuale con make_timestamp: $todaytimestamp", DEBUG_DEVELOPER);
 $timestampgoogle = str_replace('+00:00', 'Z', date('c', $todaytimestamp));
+debugging("Timestamp di aggiornamento attuale con str_replace: $timestampgoogle", DEBUG_DEVELOPER);
 $moduleinstance->last_sync = $timestampgoogle;
 $DB->update_record('gmeet', $moduleinstance);
+
+if (debugging('', DEBUG_DEVELOPER)) {
+    debugging("Nome dello spazio: $spacename", DEBUG_DEVELOPER);
+    debugging("Numero dell'istanza: $instanceid", DEBUG_DEVELOPER);
+    debugging("Data di ultimo sync: $data", DEBUG_DEVELOPER);
+    die();
+};
 
 header('location:' . $SESSION->redirecturl);
 exit();
