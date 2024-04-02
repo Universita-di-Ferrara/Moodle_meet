@@ -40,6 +40,7 @@ $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIS
 
 // Default date.
 $timestamp = make_timestamp((date('Y') - 1));
+debugging("Timestamp default date: $timestamp",DEBUG_DEVELOPER);
 $data = str_replace('+00:00', 'Z', date('c', $timestamp));
 
 // Se il campo last_sync è valorizzato, prendo quello come timestamp.

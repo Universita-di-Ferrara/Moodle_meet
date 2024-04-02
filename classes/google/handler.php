@@ -23,6 +23,7 @@ use moodle_exception;
 use stdClass;
 use core\oauth2\api;
 use mod_gmeet\rest;
+use Throwable;
 
 /**
  * Class handler
@@ -290,18 +291,21 @@ class handler {
         $argsraw = false;
         $jsonencodedtimestamp = json_encode($timestamp);
         $args = [
-            'filter' => "space.name = $spacename start_time >= $jsonencodedtimestamp",
+            'filter' => "spacess.name = $spacename start_time >= $jsonencodedtimestamp",
         ];
-        if(debugging('',DEBUG_DEVELOPER)) {
-            debugging(print_r($args,true));
-        };
         if ($pagetoken) {
             $argsraw = [
                 'pageToken' => $argsraw,
             ];
         };
-        $conferenceresponse = $this->request($service, 'listconferences', $args, $argsraw);
-        return $conferenceresponse;
+        try {
+            $conferenceresponse = $this->request($service, 'listconferences', $args, $argsraw);
+            return $conferenceresponse;
+        } catch (\Throwable $th) {
+            //throw $th;
+            debugging(print_r($args,true));
+            debugging($th);
+        }
     }
     /**
      * List all recordings filtered by $conferencename
