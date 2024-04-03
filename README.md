@@ -13,7 +13,7 @@ Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficial
 
 🇮🇹 ITA [Documentazione Plugin](https://github.com/Universita-di-Ferrara/Moodle_meet/blob/main/docs/it_doc.md)
 
-🇬🇧 ENG [Plugin Documentation](#)
+🇬🇧 ENG [Plugin Documentation](https://github.com/Universita-di-Ferrara/Moodle_meet/blob/main/docs/eng_doc.md)
 
 
 ## Inspired by ##
