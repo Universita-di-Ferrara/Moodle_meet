@@ -11,55 +11,10 @@ Il plugin ricorre alle Meet API di Google rilasciate in Beta nel 2023 e ufficial
 
 📚 [Documentazione ufficiale delle API di Google](https://developers.google.com/meet/api/guides/overview?hl=it)
 
-## ⚠️ Configurazioni iniziali obbligatorie
+🇮🇹 ITA [Documentazione Plugin](https://github.com/Universita-di-Ferrara/Moodle_meet/blob/main/docs/it_doc.md)
 
-Prima di installare il plugin sarà necessario effettuare delle configurazioni iniziali, di seguito l'elenco:
+🇬🇧 ENG [Plugin Documentation](#)
 
-###Per prima cosa configurare il progetto su Google Cloud: ### 
-
-1. **Creare un progetto** all'interno della [Google Cloud Platform](https://console.cloud.google.com/),
-
-2. Dal Menù API e Servizi **abilitare le API** necessarie: 
-
-   _Google Meet_
-
-   _Google Drive_
-
-4. **Creare delle nuove credenziali** *ID client OAuth 2.0* di tipologia "Applicazione Web".
-   
-5. Durante la configurazioni di tali credenziali, **aggiungere alla sezione** *URI di reindirizzamento autorizzati* il seguente URI: 
-   **{your_moodle_url}/mod/gmeet/oauth2callback.php**
-
-### Su Moodle ### 
-
-1. _Amministrazione del sito_ > _Servizi OAuth 2_ > Abilitare OAuth 2
-
-2. Nelle configurazioni inserire: **Client ID** e **Secret** recuperati nei passaggi precedenti
-
-3. Nella configurazione del Plugin: Specificare il servizio di OAuth2 configurato (Google).
- 
-## Installing via uploaded ZIP file ##
-
-1. Log in to your Moodle site as an admin and go to _Site administration >
-   Plugins > Install plugins_.
-2. Upload the ZIP file with the plugin code. You should only be prompted to add
-   extra details if your plugin type is not automatically detected.
-3. Check the plugin validation report and finish the installation.
-
-## Installing manually ##
-
-The plugin can be also installed by putting the contents of this directory to
-
-    {your/moodle/dirroot}/mod/gmeet
-
-Afterwards, log in to your Moodle site as an admin and go to _Site administration >
-Notifications_ to complete the installation.
-
-Alternatively, you can run
-
-    $ php admin/cli/upgrade.php
-
-to complete the installation from the command line.
 
 ## Inspired by ##
 
