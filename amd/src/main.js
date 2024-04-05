@@ -35,8 +35,8 @@ const Selectors = {
     },
 };
 
-const asyncGetRecording = async (id) => {
-    const recording = await getRecording(id);
+const asyncGetRecording = async (id, courseid) => {
+    const recording = await getRecording(id, courseid);
     return recording;
 };
 
@@ -47,8 +47,8 @@ const asyncUpdateRecording = async (recording) => {
     }
 };
 
-const asyncDeleteRecording = async (id) => {
-    const response = await deleteRecording(id);
+const asyncDeleteRecording = async (id, courseid) => {
+    const response = await deleteRecording(id, courseid);
     if (response.responsecode) {
         window.location.reload(true);
     }
@@ -63,12 +63,17 @@ const registerEventListeners = (deletemodal) => {
         if (editingRecordingelement) {
             e.preventDefault();
             const recordingid = editingRecordingelement.getAttribute('data-id');
-            asyncGetRecording(recordingid).then((values) => {
+            const courseid = editingRecordingelement.getAttribute('course-id');
+            asyncGetRecording(recordingid, courseid).then((values) => {
                 const modalForm = new ModalForm({
                     // Name of the class where form is defined (must extend \core_form\dynamic_form):
                     formClass: "mod_gmeet\\recording_form",
                     // Add as many arguments as you need, they will be passed to the form:
-                    args: { id: recordingid, recordingname: values.name, recordingdescription: values.description },
+                    args: { id: recordingid,
+                            recordingname: values.name,
+                            recordingdescription: values.description,
+                            courseid: courseid,
+                        },
                     // Pass any configuration settings to the modal dialogue, for example, the title:
                     modalConfig: {
                         title: getString('editingfield', 'mod_gmeet', editingRecordingelement.getAttribute('data-name'))
@@ -94,13 +99,14 @@ const registerEventListeners = (deletemodal) => {
         }
         if (deleteRecordingelement) {
             const recordingid = deleteRecordingelement.getAttribute('data-id');
+            const courseid = deleteRecordingelement.getAttribute('course-id');
             e.preventDefault();
             deletemodal.show();
             deletemodal.getRoot().on(ModalEvents.save, () => {
                 addToast(getString('deletetoast', 'mod_gmeet'),{
                     type:'danger',
                 });
-                asyncDeleteRecording(recordingid);
+                asyncDeleteRecording(recordingid, courseid);
             });
         }
 

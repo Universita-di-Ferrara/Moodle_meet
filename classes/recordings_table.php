@@ -122,6 +122,7 @@ class recordings_table extends table_sql {
             $linkedit = html_writer::link("#", $icon, [
                 'data-role' => 'editfield',
                 'data-id' => $values->id,
+                'course-id' => $COURSE->id,
                 'class' => 'mr-3',
             ]);
 
@@ -129,6 +130,7 @@ class recordings_table extends table_sql {
             $linkdelete = html_writer::link("#", $icon, [
                 'data-role' => 'deletefield',
                 'data-id' => $values->id,
+                'course-id' => $COURSE->id,
                 'class' => 'mr-3',
             ]);
 

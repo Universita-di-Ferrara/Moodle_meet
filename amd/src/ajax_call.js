@@ -24,9 +24,10 @@
 import {call as fetchMany} from 'core/ajax';
 
 
-const getRecordingRequest = (recordingid) => ({
+const getRecordingRequest = (recordingid, courseid) => ({
     methodname: 'mod_gmeet_get_recording',
     args: {
+        courseid:courseid,
         id:recordingid,
     },
 });
@@ -34,22 +35,24 @@ const getRecordingRequest = (recordingid) => ({
 const updateRecordingRequest = (recording) => ({
     methodname: 'mod_gmeet_update_recording',
     args: {
+        courseid:recording.courseid,
         id:recording.id,
         name:recording.recordingname,
         description:recording.recordingdescription
     }
 });
 
-const deleteRecordingRequest = (recordingid) => ({
+const deleteRecordingRequest = (recordingid, courseid) => ({
     methodname: 'mod_gmeet_delete_recording',
     args: {
+        courseid:courseid,
         id:recordingid,
     }
 });
 
-export const getRecording = (recordingid) => {
+export const getRecording = (recordingid, courseid) => {
     const response = fetchMany([
-        getRecordingRequest(recordingid)
+        getRecordingRequest(recordingid, courseid)
     ]);
 
     return response[0];
@@ -63,9 +66,9 @@ export const updateRecording = (recording) => {
     return response[0];
 };
 
-export const deleteRecording = (recordingid) => {
+export const deleteRecording = (recordingid, courseid) => {
     const response = fetchMany([
-       deleteRecordingRequest(recordingid)
+       deleteRecordingRequest(recordingid, courseid)
     ]);
 
     return response[0];

@@ -19,10 +19,11 @@ namespace mod_gmeet\external;
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/lib/externallib.php');
 
+use context_course;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
-use context_system;
+use context_module;
 use external_api;
 use moodle_exception;
 use stdClass;
@@ -40,19 +41,20 @@ class put_recording extends external_api {
      * @param int $id recordings id
      * @param string $name recordings name
      * @param string $description recordings description
+     * @param int $courseid course id
      * @return object $recording recording'row
      */
-    public static function put_recording($id, $name , $description) {
+    public static function put_recording($id, $name , $description, $courseid) {
         global $DB;
-
-        $context = context_system::instance();
-        require_capability('mod/gmeet:addinstance', $context);
-
         $params = self::validate_parameters(self::put_recording_parameters(), [
             'id' => $id,
             'name' => $name,
             'description' => $description,
+            'courseid' => $courseid,
         ]);
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('mod/gmeet:addinstance', $context);
 
         if (!(isset($params['name']) && isset($params['description']))) {
             throw new moodle_exception('either name or recording name must be passed as a parameter');
@@ -81,6 +83,7 @@ class put_recording extends external_api {
             'id' => new external_value(PARAM_INT, 'recording \'s id', VALUE_REQUIRED),
             'name' => new external_value(PARAM_TEXT, 'recording \'s name', VALUE_DEFAULT, null),
             'description' => new external_value(PARAM_TEXT, 'recording \'s description', VALUE_DEFAULT, null),
+            'courseid' => new external_value(PARAM_INT, 'course \'s id', VALUE_REQUIRED),
         ]);
     }
 

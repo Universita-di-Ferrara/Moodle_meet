@@ -72,6 +72,7 @@ if (has_capability('mod/gmeet:addinstance', $modulecontext) && $loggedin) {
 
 $spaceinfo = [
     'instance_id' => $moduleinstance->id,
+    'course_id' => $COURSE->id,
     'meeting_url' => $moduleinstance->google_url,
     'space_name' => $moduleinstance->space_name,
     'isowner' => $ownership,

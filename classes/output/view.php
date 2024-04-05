@@ -59,6 +59,7 @@ class view implements renderable, templatable {
     public function export_for_template(renderer_base $output): stdClass {
         $meet = new stdClass();
         $meet->instanceId = $this->meetinfo['instance_id'];
+        $meet->courseId = $this->meetinfo['course_id'];
         $meet->spaceName = $this->meetinfo['space_name'];
         $meet->meetingUrl = $this->meetinfo['meeting_url'];
         $meet->isowner = $this->meetinfo['isowner'];

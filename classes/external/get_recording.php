@@ -19,6 +19,7 @@ namespace mod_gmeet\external;
 defined('MOODLE_INTERNAL') || die;
 require_once($CFG->dirroot . '/lib/externallib.php');
 
+use context_course;
 use external_function_parameters;
 use external_single_structure;
 use external_value;
@@ -38,19 +39,23 @@ class get_recording extends external_api {
     /**
      * Function for retrieving recordings from gmeet_recordings table
      * @param int $id recordings id
+     * @param int $courseid course id
      * @return object $recording recording'row
      */
-    public static function get_recording($id) {
+    public static function get_recording(int $id, int $courseid) {
         global $DB;
 
-        $context = context_system::instance();
+        $params = self::validate_parameters(self::get_recording_parameters(), [
+            'id' => $id,
+            'courseid' => $courseid,
+        ]);
+        $id = $params['id'];
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
         require_capability('mod/gmeet:addinstance', $context);
 
-        $params = self::validate_parameters(self::get_recording_parameters(), ['id' => $id]);
-        $id = $params['id'];
         $recording = $DB->get_record('gmeet_recordings', ['id' => $id]);
         return $recording;
-
     }
 
     /**
@@ -62,6 +67,7 @@ class get_recording extends external_api {
     public static function get_recording_parameters() {
         return new external_function_parameters([
             'id' => new external_value(PARAM_INT, 'recording \'s id'),
+            'courseid' => new external_value(PARAM_INT, 'course \'s id'),
         ]);
     }
 

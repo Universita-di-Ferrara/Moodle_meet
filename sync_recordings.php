@@ -27,10 +27,12 @@ use mod_gmeet\google\handler;
 require('../../config.php');
 
 require_login();
-require_capability('mod/gmeet:addinstance', context_system::instance());
 
 $instanceid = required_param('instance_id', PARAM_INT);
 $spacename = required_param('space_name', PARAM_TEXT);
+$courseid = required_param('course_id', PARAM_TEXT);
+
+require_capability('mod/gmeet:addinstance', context_course::instance($courseid));
 
 $settings = (get_config('gmeet'));
 $domain = $settings->domain;

@@ -22,7 +22,7 @@ require_once($CFG->dirroot . '/lib/externallib.php');
 use external_function_parameters;
 use external_single_structure;
 use external_value;
-use context_system;
+use context_course;
 use external_api;
 use stdClass;
 
@@ -37,17 +37,20 @@ class delete_recording extends external_api {
     /**
      * Function for retrieving recordings from gmeet_recordings table
      * @param int $id recordings id
+     * @param int $courseid course id
      * @return object $recording recording'row
      */
-    public static function delete_recording(int $id) {
+    public static function delete_recording(int $id, int $courseid) {
         global $DB;
-
-        $context = context_system::instance();
-        require_capability('mod/gmeet:addinstance', $context);
 
         $params = self::validate_parameters(self::delete_recording_parameters(), [
             'id' => $id,
+            'courseid' => $courseid,
         ]);
+
+        $context = context_course::instance($params['courseid']);
+        self::validate_context($context);
+        require_capability('mod/gmeet:addinstance', $context);
         $id = $params['id'];
 
         $response = $DB->delete_records('gmeet_recordings', ['id' => $id]);
@@ -66,6 +69,7 @@ class delete_recording extends external_api {
     public static function delete_recording_parameters() {
         return new external_function_parameters([
             'id' => new external_value(PARAM_INT, 'recording \'s id', VALUE_REQUIRED),
+            'courseid' => new external_value(PARAM_INT, 'course \'s id', VALUE_REQUIRED),
         ]);
     }
 

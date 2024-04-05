@@ -40,7 +40,8 @@ class recording_form extends \core_form\dynamic_form {
      * @return \context
      */
     protected function get_context_for_dynamic_submission(): \context {
-        return \context_system::instance();
+        $courseid = $this->optional_param('courseid', '', PARAM_INT);
+        return \context_course::instance($courseid);
     }
 
     /**
@@ -72,6 +73,7 @@ class recording_form extends \core_form\dynamic_form {
     public function set_data_for_dynamic_submission(): void {
         $this->set_data([
             'id' => $this->optional_param('id', '', PARAM_INT),
+            'courseid' => $this->optional_param('courseid', '', PARAM_INT),
             'recordingname' => $this->optional_param('recordingname', '', PARAM_TEXT),
             'recordingdescription' => $this->optional_param('recordingdescription', '', PARAM_TEXT),
         ] + $this->get_options());
@@ -113,12 +115,17 @@ class recording_form extends \core_form\dynamic_form {
      * Defines forms elements
      */
     public function definition() {
+        global $COURSE;
         $mform = $this->_form;
 
         // Required field (client-side validation test).
         $mform->addElement('hidden', 'id', 'Id', 'size="50"');
         $mform->addRule('id', null, 'required', null, 'client');
-        $mform->setType('id', PARAM_TEXT);
+        $mform->setType('id', PARAM_INT);
+
+        $mform->addElement('hidden', 'courseid', 'courseid', 'size="50"');
+        $mform->addRule('courseid', null, 'required', null, 'client');
+        $mform->setType('courseid', PARAM_INT);
 
         $mform->addElement('text', 'recordingname', get_string('recording_table_header', 'mod_gmeet'), 'size="50"');
         $mform->addRule('recordingname', null, 'required', null, 'client');
