@@ -53,6 +53,16 @@ class handler {
     const GOOGLE_SCOPES = 'https://www.googleapis.com/auth/drive https://www.googleapis.com/auth/meetings.space.created';
 
     /**
+     * Conference pageSize limit
+     */
+    const CONFERENCE_PAGESIZE = 50;
+
+    /**
+     * Conference time limit
+     */
+    const TIME_LIMIT = 15;
+    
+    /**
      * OAuth 2 client
      * @var \core\oauth2\client
      */
@@ -293,10 +303,13 @@ class handler {
         $args = [
             'filter' => "space.name = $spacename start_time >= $jsonencodedtimestamp",
         ];
-        debugging(print_r($args,true));
+        $argsraw = [
+            'pageSize' => $this::CONFERENCE_PAGESIZE,
+        ];
         if ($pagetoken) {
             $argsraw = [
-                'pageToken' => $argsraw,
+                'pageToken' => $pagetoken,
+                'pageSize' => $this::CONFERENCE_PAGESIZE,
             ];
         };
         try {

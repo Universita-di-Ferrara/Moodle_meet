@@ -59,12 +59,21 @@ do {
     $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->space_name, $data, $nexttokenpage);
     if (isset($responseconferencelist->nextPageToken)) {
         $nexttokenpage = $responseconferencelist->nextPageToken;
+    }else {
+        $nexttokenpage = false;
     }
     if (isset($responseconferencelist->conferenceRecords)) {
         $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
     }
 } while ($nexttokenpage);
+
 foreach ($allconference as $element) {
+    
+    $minutesdiff = date_diff(new DateTime($element->endTime),new DateTime($element->startTime))->format("%i");
+    // Avoid conference last less than 15m.
+    if ($minutesdiff < $googlehandler::TIME_LIMIT) {
+        continue;
+    }
     $recordings  = $googlehandler->list_recordings_request($element->name);
     if (!(isset($recordings->recordings))) {
         continue;
