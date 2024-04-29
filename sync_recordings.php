@@ -42,9 +42,9 @@ $moduleinstance = $DB->get_record('gmeet', ['id' => $instanceid], '*', MUST_EXIS
 
 // Default date.
 $timestamp = make_timestamp((date('Y') - 1));
-debugging("Timestamp default date: $timestamp",DEBUG_DEVELOPER);
-$offset_local = date('P',$timestamp);
-$data = str_replace($offset_local, 'Z', date('c', $timestamp));
+debugging("Timestamp default date: $timestamp", DEBUG_DEVELOPER);
+$offsetlocal = date('P', $timestamp);
+$data = str_replace($offsetlocal, 'Z', date('c', $timestamp));
 
 // Se il campo last_sync è valorizzato, prendo quello come timestamp.
 if (isset($moduleinstance->last_sync)) {
@@ -59,19 +59,19 @@ do {
     $responseconferencelist = $googlehandler->list_conference_request($moduleinstance->space_name, $data, $nexttokenpage);
     if (isset($responseconferencelist->nextPageToken)) {
         $nexttokenpage = $responseconferencelist->nextPageToken;
-    }else {
+    } else {
         $nexttokenpage = false;
     }
     if (isset($responseconferencelist->conferenceRecords)) {
         $allconference = array_merge($allconference, $responseconferencelist->conferenceRecords);
     }
 } while ($nexttokenpage);
-
 foreach ($allconference as $element) {
-    
-    $minutesdiff = date_diff(new DateTime($element->endTime),new DateTime($element->startTime))->format("%i");
+    $minutesdiff = date_diff(new DateTime($element->endTime), new DateTime($element->startTime))->format("%i");
+    $hoursdiff = date_diff(new DateTime($element->endTime), new DateTime($element->startTime))->format("%h");
+    $timediff = $minutesdiff + 60 * $hoursdiff;
     // Avoid conference last less than 15m.
-    if ($minutesdiff < $googlehandler::TIME_LIMIT) {
+    if ($timediff < $googlehandler::TIME_LIMIT) {
         continue;
     }
     $recordings  = $googlehandler->list_recordings_request($element->name);
@@ -113,18 +113,16 @@ foreach ($allconference as $element) {
 // Dopo aver inserito le registrazioni in db, posso aggiornare il campo last_sync.
 $todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
 debugging("Timestamp di aggiornamento attuale con make_timestamp: $todaytimestamp", DEBUG_DEVELOPER);
-$offset_local = date('P',$todaytimestamp);
-$timestampgoogle = str_replace($offset_local, 'Z', date('c', $todaytimestamp));
+$offsetlocal = date('P', $todaytimestamp);
+$timestampgoogle = str_replace($offsetlocal, 'Z', date('c', $todaytimestamp));
 debugging("Timestamp di aggiornamento attuale con str_replace: $timestampgoogle", DEBUG_DEVELOPER);
 $moduleinstance->last_sync = $timestampgoogle;
 $DB->update_record('gmeet', $moduleinstance);
-
 if (debugging('', DEBUG_DEVELOPER)) {
     debugging("Nome dello spazio: $spacename", DEBUG_DEVELOPER);
     debugging("Numero dell'istanza: $instanceid", DEBUG_DEVELOPER);
     debugging("Data di ultimo sync: $data", DEBUG_DEVELOPER);
     die();
 };
-
 header('location:' . $SESSION->redirecturl);
 exit();

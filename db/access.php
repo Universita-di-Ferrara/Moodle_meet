@@ -34,10 +34,9 @@ $capabilities = [
         'captype' => 'write',
         'contextlevel' => CONTEXT_COURSE,
         'archetypes' => [
-                'editingteacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
         ],
-        ],
-
+    ],
     // Ability to see that the offline quiz exists, and the basic information
     // about it, for example the start date and time limit.
     'mod/gmeet:view' => [
@@ -48,7 +47,12 @@ $capabilities = [
             'student' => CAP_ALLOW,
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW, ],
+            'manager' => CAP_ALLOW,
         ],
+    ],
+    'mod/gmeet:manager' => [
+        'riskbitmask' => RISK_XSS,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+    ],
 ];
-

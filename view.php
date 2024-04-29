@@ -38,7 +38,7 @@ $logout = optional_param('logout', 0, PARAM_BOOL);
 
 $client = new handler();
 
-// Get Activity instance
+// Get Activity instance.
 if ($id) {
     $cm = get_coursemodule_from_id('gmeet', $id, 0, false, MUST_EXIST);
     $course = $DB->get_record('course', ['id' => $cm->course], '*', MUST_EXIST);
@@ -51,7 +51,7 @@ if ($id) {
 require_login($course, true, $cm);
 $modulecontext = context_module::instance($cm->id);
 
-// Render activity page
+// Render activity page.
 $PAGE->set_url('/mod/gmeet/view.php', ['id' => $cm->id]);
 $PAGE->set_title(format_string($moduleinstance->name));
 $PAGE->set_heading(format_string($course->fullname));
@@ -61,10 +61,15 @@ $PAGE->requires->js_call_amd('mod_gmeet/main', 'init');
 if ($logout) {
     $client->logout();
 }
-// Set URL in Session
+// Set URL in Session.
 $SESSION->redirecturl = $PAGE->url;
 $ownership = false;
+$modmanager = false;
 $loggedin = $client->check_login();
+
+if (has_capability('mod/gmeet:manager', $modulecontext) && $loggedin) {
+    $modmanager = true;
+}
 
 if (has_capability('mod/gmeet:addinstance', $modulecontext) && $loggedin) {
     $ownership = $client->getspace_request($moduleinstance->space_name);
@@ -76,6 +81,7 @@ $spaceinfo = [
     'meeting_url' => $moduleinstance->google_url,
     'space_name' => $moduleinstance->space_name,
     'isowner' => $ownership,
+    'ismodmanager' => $modmanager,
 ];
 
 echo $OUTPUT->header();

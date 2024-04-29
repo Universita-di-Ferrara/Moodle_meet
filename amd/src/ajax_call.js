@@ -32,6 +32,17 @@ const getRecordingRequest = (recordingid, courseid) => ({
     },
 });
 
+const addRecordingRequest = (recording) => ({
+    methodname: 'mod_gmeet_add_recording',
+    args: {
+        fileid:recording.fileid,
+        date:recording.date,
+        courseid:recording.courseid,
+        instanceid:recording.instanceid,
+        name:recording.recordingname,
+    }
+});
+
 const updateRecordingRequest = (recording) => ({
     methodname: 'mod_gmeet_update_recording',
     args: {
@@ -53,6 +64,14 @@ const deleteRecordingRequest = (recordingid, courseid) => ({
 export const getRecording = (recordingid, courseid) => {
     const response = fetchMany([
         getRecordingRequest(recordingid, courseid)
+    ]);
+
+    return response[0];
+};
+
+export const addRecording = (recording) => {
+    const response = fetchMany([
+        addRecordingRequest(recording)
     ]);
 
     return response[0];

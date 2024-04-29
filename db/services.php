@@ -36,6 +36,13 @@ $functions = [
         'ajax' => true,
 
     ],
+    'mod_gmeet_add_recording' => [
+        'classname' => 'mod_gmeet\external\post_recording',
+        'methodname' => 'post_recording',
+        'description' => 'Add new Recording',
+        'type' => 'write',
+        'ajax' => true,
+    ],
     'mod_gmeet_update_recording' => [
         'classname' => 'mod_gmeet\external\put_recording',
         'methodname' => 'put_recording',

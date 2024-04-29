@@ -63,6 +63,7 @@ class view implements renderable, templatable {
         $meet->spaceName = $this->meetinfo['space_name'];
         $meet->meetingUrl = $this->meetinfo['meeting_url'];
         $meet->isowner = $this->meetinfo['isowner'];
+        $meet->ismodmanager = $this->meetinfo['ismodmanager'];
         return $meet;
     }
 }

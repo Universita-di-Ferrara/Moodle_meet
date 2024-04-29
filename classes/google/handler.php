@@ -61,7 +61,7 @@ class handler {
      * Conference time limit
      */
     const TIME_LIMIT = 15;
-    
+
     /**
      * OAuth 2 client
      * @var \core\oauth2\client
@@ -316,8 +316,7 @@ class handler {
             $conferenceresponse = $this->request($service, 'listconferences', $args, $argsraw);
             return $conferenceresponse;
         } catch (\Throwable $th) {
-            //throw $th;
-            debugging(print_r($args,true));
+            debugging($args);
             debugging($th);
         }
     }
@@ -395,7 +394,7 @@ class handler {
         $service = new rest($this->get_oauth_client());
         $args = [
             'fileid' => $fileid,
-            'fields' => 'id, name, trashed',
+            'fields' => 'id, name, trashed, createdTime',
         ];
         try {
             $response = $this->request($service, 'get_file', $args, false);
