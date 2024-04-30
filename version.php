@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_gmeet';
-$plugin->release = '0.2.1';
-$plugin->version = 2024042905;
+$plugin->release = '0.9.0';
+$plugin->version = 2024043001;
 $plugin->requires = 2022112800;
 $plugin->maturity = MATURITY_BETA;

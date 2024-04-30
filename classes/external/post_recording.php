@@ -70,6 +70,7 @@ class post_recording extends external_api {
         $recording->date = $datesql;
         $recording->file_id = $params['fileid'];
         $recording->name = $params['name'];
+        $recording->description = "";
         if (isset($params['name'])) {
             $recording->name = $params['name'];
         }
