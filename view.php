@@ -74,7 +74,6 @@ if (has_capability('mod/gmeet:manager', $modulecontext) && $loggedin) {
 if (has_capability('mod/gmeet:addinstance', $modulecontext) && $loggedin) {
     $ownership = $client->getspace_request($moduleinstance->space_name);
 }
-
 $spaceinfo = [
     'instance_id' => $moduleinstance->id,
     'course_id' => $COURSE->id,
@@ -82,7 +81,10 @@ $spaceinfo = [
     'space_name' => $moduleinstance->space_name,
     'isowner' => $ownership,
     'ismodmanager' => $modmanager,
+    'lastupdate' => $moduleinstance->last_sync,
 ];
+
+error_log(print_r($spaceinfo,true));
 
 echo $OUTPUT->header();
 

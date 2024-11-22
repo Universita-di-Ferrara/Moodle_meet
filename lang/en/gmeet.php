@@ -75,3 +75,4 @@ $string['addrecording_formbutton'] = "Add new recording";
 $string['urlhelp'] = "Please enter the link that you can find in File > Share > Copy Link";
 $string['addrecording_toast'] = "Adding new recordings...";
 $string['filealreadyexist'] = "The file you are trying to insert already exist";
+$string['sync_string'] = "Last sync";

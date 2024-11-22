@@ -24,6 +24,7 @@
 
 namespace mod_gmeet\output;
 
+use DateTimeImmutable;
 use renderable;
 use renderer_base;
 use templatable;
@@ -58,12 +59,14 @@ class view implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output): stdClass {
         $meet = new stdClass();
+        $data = new DateTimeImmutable($this->meetinfo['lastupdate']);
         $meet->instanceId = $this->meetinfo['instance_id'];
         $meet->courseId = $this->meetinfo['course_id'];
         $meet->spaceName = $this->meetinfo['space_name'];
         $meet->meetingUrl = $this->meetinfo['meeting_url'];
         $meet->isowner = $this->meetinfo['isowner'];
         $meet->ismodmanager = $this->meetinfo['ismodmanager'];
+        $meet->lastupdate = $data->format("l, d F Y");
         return $meet;
     }
 }

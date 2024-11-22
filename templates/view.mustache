@@ -44,6 +44,7 @@ Example context (json):
         </button>
     </form>
     
+
     {{/isowner}}
     
     {{#ismodmanager}}
@@ -52,4 +53,9 @@ Example context (json):
     </button>
     {{/ismodmanager}}
 </div>
+{{#ismodmanager}}
+<div class="pt-3">
+    <p>{{#str}} sync_string, mod_gmeet {{/str}}: {{lastupdate}}</p>
+</div>
+{{/ismodmanager}}
     
