@@ -62,6 +62,12 @@ function gmeet_add_instance($moduleinstance, $mform = null) {
 
     $moduleinstance->google_url = $space->meetingUri;
     $moduleinstance->space_name = $space->name;
+    
+    // Create last_sync.
+    $todaytimestamp = make_timestamp(date('Y'), date('m'), date('d'));
+    $offsetlocal = date('P', $todaytimestamp);
+    $timestampgoogle = str_replace($offsetlocal, 'Z', date('c', $todaytimestamp));
+    $moduleinstance->last_sync = $timestampgoogle;
 
     $id = $DB->insert_record('gmeet', $moduleinstance);
 
