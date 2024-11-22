@@ -84,8 +84,6 @@ $spaceinfo = [
     'lastupdate' => $moduleinstance->last_sync,
 ];
 
-error_log(print_r($spaceinfo,true));
-
 echo $OUTPUT->header();
 
 $output = $PAGE->get_renderer('mod_gmeet');

@@ -255,7 +255,7 @@ class handler {
     public static function request($service, $api, $params, $rawpost = false): ?\stdClass {
         try {
             $response = $service->call($api, $params, $rawpost);
-            
+
         } catch (\Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 // This is raised when the Drive API service or the Calendar API service
