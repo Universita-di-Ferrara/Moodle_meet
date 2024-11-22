@@ -255,6 +255,7 @@ class handler {
     public static function request($service, $api, $params, $rawpost = false): ?\stdClass {
         try {
             $response = $service->call($api, $params, $rawpost);
+            
         } catch (\Exception $e) {
             if ($e->getCode() == 403 && strpos($e->getMessage(), 'Access Not Configured') !== false) {
                 // This is raised when the Drive API service or the Calendar API service
@@ -374,8 +375,15 @@ class handler {
         $args = [
             'name' => $name,
         ];
+        $argsraw = [
+            "config" => [
+                "accessType" => $this::ACCESS_TYPE_TRUSTED,
+                "entryPointAccess" => $this::ENTRY_POINT_ACCESS_ALL,
+            ],
+        ];
+
         try {
-            $response = $this->request($service, 'get_space', $args, false);
+            $response = $this->request($service, 'get_space', $args, json_encode($argsraw));
             return true;
         } catch (\Throwable $th) {
             debugging($th->getMessage());
@@ -387,7 +395,7 @@ class handler {
      *
      * @param string $fileid fileid
      *
-     * @return $response file
+     * @return object $response file
      */
     public function getfile_request($fileid) {
 

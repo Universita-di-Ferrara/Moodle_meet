@@ -118,11 +118,6 @@ $timestampgoogle = str_replace($offsetlocal, 'Z', date('c', $todaytimestamp));
 debugging("Timestamp di aggiornamento attuale con str_replace: $timestampgoogle", DEBUG_DEVELOPER);
 $moduleinstance->last_sync = $timestampgoogle;
 $DB->update_record('gmeet', $moduleinstance);
-if (debugging('', DEBUG_DEVELOPER)) {
-    debugging("Nome dello spazio: $spacename", DEBUG_DEVELOPER);
-    debugging("Numero dell'istanza: $instanceid", DEBUG_DEVELOPER);
-    debugging("Data di ultimo sync: $data", DEBUG_DEVELOPER);
-    die();
-};
+
 header('location:' . $SESSION->redirecturl);
 exit();
